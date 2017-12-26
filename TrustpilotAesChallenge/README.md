@@ -4,9 +4,15 @@ This folder holds multiple implementations of an AES decryptor for
 [cracking an AES encrypted
 message](http://bugfree.dk/blog/2014/07/17/trustpilot-challenge-crack-aes-encrypted-message).
 
-Summary of performance:
+# Motivation
 
-|Platform                      |Golang|.NET Core/C#|.NET Core/F#|
+- Learn how to setup a VSCode environment on Linux for Golang and .NET
+  Core development.
+- Learn how to profile a Go program.
+
+# Summary of performance:
+
+|Platform                      |Go    |.NET Core/C#|.NET Core/F#|
 |------------------------------|------|------------|------------|
 |Ubuntu 16.04 (virtual machine)| 0m58s|       6m03s|       5m56s|
 |Windows 10 (physical machine) | 0m30s|       4m10s|       4m11s|
@@ -40,7 +46,11 @@ CPU info:
     address sizes   : 39 bits physical, 48 bits virtual
     power management:
 
-# Golang
+Observe presense of CPU flags pclmulqdq (Perform a Carry-Less
+Multiplication of Quadword instruction) and aes (Advanced Encryption
+Standard).
+
+# Go
 
 Linux: runtime and memory use measured by the time command:
 
@@ -215,35 +225,37 @@ Profiling while the main program is running:
             .          .     87:
             .          .     88:// func aesEncBlock(dst, src *[16]byte, ks []uint32)
 
-From profiling, we see that a significant amount of time is spent
-within [gcm_amd64.s](https://golang.org/src/crypto/aes/gcm_amd64.s).
-If the platform permits, Golang implements AES in assembler. That
-makes sense given how modern CPUs have [build-in instructions for
-working with AES](https://en.wikipedia.org/wiki/AES_instruction_set).
+From profiling, we see that a large amount of time is spent within
+[gcm_amd64.s](https://golang.org/src/crypto/aes/gcm_amd64.s). If the
+platform permits, Go implements AES in assembler, making use of
+[build-in processor instructions for working with
+AES](https://en.wikipedia.org/wiki/AES_instruction_set).
 
-Looking at the hasGCMAsm (has Galois Counter Mode) function in the
-profiler, time spent is likely one line off. It's more likely that
-line 79 is what takes up more than 50% of the runtime. 
+Looking at the hasGCMAsm (has Galois Counter Mode assembler) function
+in the profiler, reported time is likely one instruction off. It's
+more likely that line 79 is what takes up more than 50% of the
+runtime. 
 
-hasGCMAsm places a 1 in the AX register. Doing so and calling the
-CPUID instruction causes the CPU to populate the DX register with
-[various processor info and feature
-flags](https://en.wikipedia.org/wiki/CPUID#EAX=1:_Processor_Info_and_Feature_Bits).
+hasGCMAsm stores a 1 in the AX register. A value of 1 in AX while
+executing the CPUID instruction causes the CPU to populate the DX
+register with [various processor info and feature
+flags](https://en.wikipedia.org/wiki/CPUID#EAX=1:_Processor_Info_and_Feature_Bits). The
+assembly then checks weather bits 1 and 25 of DX is set. If yes, the
+function concludes that the CPU has build-in support for AES. 
 
-The assembly then checks weather bits 1 and 25 of DX got set. If they
-both did, the assembly concludes that the CPU has build-in support for
-AES. Bit 1 indicates support for the [CLMUL instruction
-set](https://en.wikipedia.org/wiki/CLMUL_instruction_set), useful to
-improve the speed of applications doing block cipher encryption in
+Bit 1 indicates support for the [CLMUL instruction
+set](https://en.wikipedia.org/wiki/CLMUL_instruction_set), useful for
+improving the speed of applications doing block cipher encryption in
 Galois/Counter Mode (such as AES). Bit 25 indicates support for the
 [AES instruction
 set](https://en.wikipedia.org/wiki/AES_instruction_set).
 
-It would seem the Golang library isn't designed for calling AES this
-many times in a tight loop. In principle, the CPUID check could be
-done only once.
+It would seem that the Go standard library isn't designed for calling
+into AES this many times in a tight loop. In principle, CPUID feature
+checking could be moved out of the hot path as support for the CLMUL
+and AES instruction sets doesn't change between calls.
 
-# CSharp
+# C#
 
     rh@linux:~/git/Playground/TrustpilotAesChallenge/CSharp$ dotnet build --configuration release
 
@@ -284,6 +296,6 @@ done only once.
 
     rh@linux:~/git/Playground/TrustpilotAesChallenge/CSharp$ dotnet publish --configuration release --runtime win10-x64
 
-# FSharp
+# F#
 
 Same commands as for CSharp.
