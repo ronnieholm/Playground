@@ -4,13 +4,13 @@ This folder holds multiple implementations of an AES decryptor for
 [cracking an AES encrypted
 message](http://bugfree.dk/blog/2014/07/17/trustpilot-challenge-crack-aes-encrypted-message).
 
-# Motivation
+## Motivation
 
-- Learn how to setup a VSCode environment on Linux for Golang and .NET
+- Learn how to setup a VSCode environment on Linux for Go and .NET
   Core development.
 - Learn how to profile a Go program.
 
-# Summary of performance:
+## Summary of performance
 
 |Platform                      |Go    |.NET Core/C#|.NET Core/F#|
 |------------------------------|------|------------|------------|
@@ -50,7 +50,7 @@ Observe presense of CPU flags pclmulqdq (Perform a Carry-Less
 Multiplication of Quadword instruction) and aes (Advanced Encryption
 Standard).
 
-# Go
+## Go
 
 Linux: runtime and memory use measured by the time command:
 
@@ -255,7 +255,7 @@ into AES this many times in a tight loop. In principle, CPUID feature
 checking could be moved out of the hot path as support for the CLMUL
 and AES instruction sets doesn't change between calls.
 
-# C#
+## C#
 
     rh@linux:~/git/Playground/TrustpilotAesChallenge/CSharp$ dotnet build --configuration release
 
@@ -296,6 +296,6 @@ and AES instruction sets doesn't change between calls.
 
     rh@linux:~/git/Playground/TrustpilotAesChallenge/CSharp$ dotnet publish --configuration release --runtime win10-x64
 
-# F#
+## F#
 
 Same commands as for CSharp.
