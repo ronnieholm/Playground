@@ -6,16 +6,16 @@ message](http://bugfree.dk/blog/2014/07/17/trustpilot-challenge-crack-aes-encryp
 
 ## Motivation
 
-- Learn how to setup a VSCode environment on Linux for Go and .NET
+- Learn how to setup a VSCode environment on Linux for Go, C and .NET
   Core development.
 - Learn how to profile a Go program.
 
 ## Summary of performance
 
-|Platform                      |Go    |.NET Core/C#|.NET Core/F#|
-|------------------------------|------|------------|------------|
-|Ubuntu 16.04 (virtual machine)| 0m58s|       6m03s|       5m56s|
-|Windows 10 (physical machine) | 0m30s|       4m10s|       4m11s|
+|Platform                      |Go   |C    |.NET Core/C#|.NET Core/F#|
+|------------------------------|-----|-----|------------|------------|
+|Ubuntu 16.04 (virtual machine)|0m58s|0m09s|       6m03s|       5m56s|
+|Windows 10 (physical machine) |0m30s|    -|       4m10s|       4m11s|
 
 CPU info:
 
@@ -254,6 +254,53 @@ It would seem that the Go standard library isn't designed for calling
 into AES this many times in a tight loop. In principle, CPUID feature
 checking could be moved out of the hot path as support for the CLMUL
 and AES instruction sets doesn't change between calls.
+
+## C
+
+The C program makes use of the [libcrypto
+API](https://wiki.openssl.org/index.php/Libcrypto_API). libcrypto
+provides the fundamental cryptographic routines used by libssl, and is
+used for base64 decoding and AES decryption.
+
+    rh@linux:~/git/Playground/TrustpilotAesChallenge/C$ gcc program.c -O2 -lcrypto
+
+	rh@linux:~/git/Playground/TrustpilotAesChallenge/C$ /usr/bin/time --verbose ./a.out 
+	5 11 14 11 1 7
+	Congra�u�a�ions� You found the decryption key. Are you the One?! ;-)
+	You're curious and you're up for a challenge! So we like you already.
+	If you'd like to work with us at Trustpilot then email us the code you wrote to find the decryption key together with your resume.
+	The email is: thereisnospoon@trustpilot.com
+	We'll get in touch with you shortly.
+
+	Best regards
+	The developers at Trustpilot
+	
+	Command being timed: "./a.out"
+	User time (seconds): 9.08
+	System time (seconds): 0.00
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:09.12
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2324
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 126
+	Voluntary context switches: 1
+	Involuntary context switches: 155
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Observe how C uses at maximum 2.4 MB of memory while Go uses 86 MB and
+.NET Core around 100 MB. The runtime speed is very impressive at well.
 
 ## C#
 
