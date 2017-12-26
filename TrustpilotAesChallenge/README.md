@@ -8,7 +8,7 @@ Summary of performance:
 
 |Platform                      |Golang|.NET Core/C#|.NET Core/F#|
 |------------------------------|------|------------|------------|
-|Ubuntu 16.04 (virtual machine)| 0m58m|       6m03s|       5m56s|
+|Ubuntu 16.04 (virtual machine)| 0m58s|       6m03s|       5m56s|
 |Windows 10 (physical machine) | 0m30s|       4m10s|       4m11s|
 
 CPU info:
