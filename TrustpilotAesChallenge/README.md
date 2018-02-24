@@ -54,7 +54,7 @@ Standard).
 
 Linux: runtime and memory use measured by the time command:
 
-    rh@linux:~/git/Playground/TrustpilotAesChallenge/Golang/src$ /usr/bin/time --verbose go run hello.go
+    rh@linux:~/git/Playground/TrustpilotAesChallenge/Golang/src$ /usr/bin/time --verbose go run program.go
     [5 11 14 11 1 7 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
     Congra�u�a�ions� You found the decryption key. Are you the One?! ;-)
     You're curious and you're up for a challenge! So we like you already.
