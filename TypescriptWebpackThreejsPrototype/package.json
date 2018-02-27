@@ -1,0 +1,21 @@
+{
+  "name": "typescript-webpack-threejs-prototype",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.ts",
+  "scripts": {
+    "start": "webpack-dev-server"
+  },
+  "author": "Ronnie Holm",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "@types/three": "^0.84.22",
+    "three": "^0.87.1 ",
+    "ts-loader": "^3.5.0",
+    "typescript": "^2.6.2"
+  },
+  "devDependencies": {
+    "webpack": "^3.11.0",
+    "webpack-dev-server": "^2.11.1"
+  }
+}
