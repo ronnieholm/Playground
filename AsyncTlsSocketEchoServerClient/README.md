@@ -9,7 +9,7 @@ This project implements an asynchronous, TLS-secured socket echo server and clie
 
 ## Generating and installing certificates
 
-Make sure Powershell is running as administrator and change directory to the root folder of this project.
+Make sure PowerShell is running as administrator and change directory to the root folder of this project.
 
 The script below generates a root certificate as well as self-signed server and client certificates, provided in the certificates folder. Only Bugfree.rootCA.crt will need to be installed into "Local computer -> Trusted Root Certification Authorities" for the client and server to run (see Import-Certificate cmdlet below): 
 
@@ -61,7 +61,7 @@ We can leave the client and server certificates in the My store and refer to the
 
 ## Running server and client
 
-After modifying server.ps1 and client.ps1 to include the correct server IP address, run the scripts in separate consoles.
+After modifying server.ps1 and client.ps1 to contain the correct server IP address, run the scripts in separate Powershell terminal (or run solution from Visual Studio).
 
     % ./server.ps1
     % ./client.ps1
@@ -128,9 +128,9 @@ Connecting 64 clients to the server, each sending and receiving at maximum speed
     Bytes received: 92655985
     Bytes sent: 92652635
 
-That's 1.8 million roundtrips per minute and given the random message length of between 1 and 100 bytes, the average message size is about 50 bytes. On the wire it's slightly more as the messages are padded as part of the encryption. Still, that about 478 roundtrips per client per second.
+That's 1.8 million round-trips per minute and given the random message length of between 1 and 100 bytes, the average message size is about 50 bytes. On the wire it's slightly more as the messages are padded as part of the encryption. Still, that about 478 round-trips per client per second.
 
-Here's Process Explorer showing the server (top) and client (bottom) sending and receving messages. The server is using about 18MB private memory and multiplexes the 64 clients across 21 threads.
+Here's Process Explorer showing the server (top) and client (bottom) sending and receiving messages. The server is using about 18MB private memory and multiplexes the 64 clients across 21 threads.
 
 ![Process Explorer](ProcessExplorer.png)
 
