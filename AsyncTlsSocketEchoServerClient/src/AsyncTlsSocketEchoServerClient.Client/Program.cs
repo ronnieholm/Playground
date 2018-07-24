@@ -42,10 +42,13 @@ namespace AsyncTlsSocketEchoServerClient.Client
             var networkStream = new NetworkStream(_server);
             _sslStream = new SslStream(networkStream, false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
 
-            // Client certificate is optional. If we leave it out, when the server calls SslStream.AuthenticateAsServer, the 
-            // clientCertificateRequired argument must be false or mutual authentication will fail. We do require this overload,
-            // however, to specificy Tls12. Checking revocation of a self-signed certificate makes no sense and will throw an 
-            // exception so we disable checkCertificateRevocation.
+            // Client certificate is optional. If we leave it out, when the
+            // server calls SslStream.AuthenticateAsServer, the
+            // clientCertificateRequired argument must be false or mutual
+            // authentication will fail. Regardless, we use this overload, to
+            // specify TLS 1.2. Certificate revocation checks for a self-signed
+            // certificate makes no sense and will throw an exception so we
+            // disable checkCertificateRevocation.
             _sslStream.AuthenticateAsClient("server.bugfree.dk", /* clientCertificates */ new X509CertificateCollection { _clientCertificate }, SslProtocols.Tls12, /* checkCertificateRevocation */ false);
             Logger.Log($"Connected {_server.LocalEndPoint} to server");
             Logger.LogStream(_sslStream);
@@ -58,8 +61,8 @@ namespace AsyncTlsSocketEchoServerClient.Client
             _sslStream.Close();
             _server.Shutdown(SocketShutdown.Both);
 
-            // Value of true causes Disconnect to not return.
-            _server.Disconnect(false);
+            // For some reason, a reuseSocket value of true causes Disconnect to not return.
+            _server.Disconnect(reuseSocket: false);
             _server.Close();
             Logger.Log($"Disconnected {endPoint} from server");
         }
@@ -82,7 +85,7 @@ namespace AsyncTlsSocketEchoServerClient.Client
             }
             catch (Exception e)
             {
-                // Exceptions are thrown for each socket if server shuts down
+                // Exceptions are thrown for each socket when server shuts down
                 Logger.Log("--> " + e);
             }
         }
@@ -90,7 +93,8 @@ namespace AsyncTlsSocketEchoServerClient.Client
 
     static class Logger
     {
-        // Ideally should be protected with a lock to prevent garbled output.            
+        // Ideally, Console should be protected by a lock to prevent garbled
+        // output.
         public static void Log(string message)
         {
             Console.WriteLine(message);
@@ -125,14 +129,12 @@ namespace AsyncTlsSocketEchoServerClient.Client
     {
         public static int Main(String[] args)
         {
-// Set to false to run through Visual Studio (for debugging) and true to run through client.ps1
+// Set to false in order to launch client from within Visual Studio (for
+// debugging) and true to run from client.ps1.
 #if false
             var ipAddress = IPAddress.Parse(args[0]);
             var endPoint = new IPEndPoint(ipAddress, int.Parse(args[1]));
-
-            // In our case, we could also just use rootCA.crt. The root certificate can validate itself.
             var clientCertificate = new X509Certificate2(args[2], args[3]);
-
             var connections = int.Parse(args[4]);
 #else
             var ipAddress = IPAddress.Parse("10.0.2.15");

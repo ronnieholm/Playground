@@ -17,13 +17,15 @@ namespace AsyncTlsSocketEchoServerClient.Server
         Socket _listener;
         IPEndPoint _endPoint;
 
-        // For this application, we could do with a list of sockets. But being able to quickly
-        // lookup socket based on endpoint is generally a useful property. We could use 
-        // Socket.RemoteEndPoint but that would mean traversing the list with every lookup.
+        // For the purpose of this server, we could do with a list of sockets.
+        // But being able to quickly lookup a socket based on endpoint (or other
+        // information) is generally useful. With a list of sockets, we could
+        // use Socket.RemoteEndPoint but that would require traversing the list
+        // with every lookup.
         ConcurrentDictionary<EndPoint, Socket> _clients;
         X509Certificate2 _serverCertificate;
 
-        // Statistics displayed on shutdown
+        // Statistics displayed on shutdown.
         public int ReadOperations;
         public int WriteOperations;
         public int BytesReceived;
@@ -42,13 +44,16 @@ namespace AsyncTlsSocketEchoServerClient.Server
         {
             _listener.Bind(_endPoint);
 
-            // backlog is the number of connections that may be initiated but not fully setup.
-            // Suppose a client opens a socket to the server, but doesn't initiate the TLS handshake
-            // by creating a NetworkStream and a SslStream. Once the backlog + 1 socket is opened,
-            // the server will refuse the connection and the call below throws a SocketException
-            // with "An existing connection was forcibly closed by the remote host". On the client,
-            // a SocketExceptionFactory+ExtendedSocketException is thrown with "No connection 
-            // could be made because the target machine actively refused it".
+            // backlog is the number of connections initialized but not yet
+            // fully setup. Suppose a client opens a socket to the server, but
+            // doesn't initiate the TLS handshake by creating a NetworkStream
+            // wrapped in an SslStream. Once the backlog + 1 socket is opened,
+            // the server will refuse the connection and Listen throws a
+            // SocketException with "An existing connection was forcibly closed
+            // by the remote host". On the client, a
+            // SocketExceptionFactory+ExtendedSocketException is thrown with "No
+            // connection could be made because the target machine actively
+            // refused it".
             _listener.Listen(backlog: 10);
             await AcceptClientAsync(_cts.Token).ConfigureAwait(false);
         }
@@ -83,7 +88,7 @@ namespace AsyncTlsSocketEchoServerClient.Server
             }
         }
 
-        // Handles processing for a single socket connection
+        // Handles all processing for a single socket connection.
         async Task ProcessEchoAsync(Socket client, EndPoint endPoint, CancellationToken ct)
         {
             var readOperations = 0;
@@ -97,35 +102,45 @@ namespace AsyncTlsSocketEchoServerClient.Server
                 using (var networkStream = new NetworkStream(client, false))
                 using (var sslStream = new SslStream(networkStream, false))
                 {
-                    // If we decide not to include a certificate with the client's call to SslStream.AuthenticateAsClient, we must set
-                    // the clientCertificateRequired argument to false. With it being set to the client and server does mutual
-                    // authentication. In most cases, authenticating the server will suffice. Checking revocation of a self-signed
-                    // certificate makes no sense and will throw an exception so we disable checkCertificateRevocation.
+                    // If we didn't include a certificate with the client's call
+                    // to SslStream.AuthenticateAsClient, we must set the
+                    // clientCertificateRequired to false. When set to true, the
+                    // client and server does mutual authentication. In most
+                    // cases, like with HTTPS, authenticating the server
+                    // suffices. Certificate revocation checks for a self-signed
+                    // certificate makes no sense and will throw an exception so
+                    // we disable checkCertificateRevocation.
                     sslStream.AuthenticateAsServer(_serverCertificate, /* clientCertificateRequired */ true, SslProtocols.Tls12, /* checkCertificateRevocation */ false);
                     Logger.LogStream(sslStream);
                     Logger.LogCertificates(sslStream);
 
-                    // Every connection is alotted a 1024 bytes buffer. A smaller buffer would mean less 
-                    // overall server memory use, but also that additional calls to ReadAsync is required
-                    // to process the same amount of data.
+                    // Every connection is alotted a 1024 bytes buffer. A
+                    // smaller buffer would mean less overall server memory use,
+                    // but also additional calls to ReadAsync to process the
+                    // same amount of data.
                     var buffer = new byte[1024];
 
                     Logger.Log($"Client connection {endPoint} accepted. {_clients.Count} clients connected to server");
                     while (!ct.IsCancellationRequested)
                     {
-                        // When the connection has been idle for this period, the connection is closed. Could
-                        // equally well be used for trigger the sending of keep-alive packets.
+                        // When the connection has been idle for this amount of
+                        // time, the connection is closed. Could equally well be
+                        // used to trigger the sending of a keep-alive packet.
                         var timeoutTask = Task.Delay(TimeSpan.FromSeconds(240), timeoutCts.Token);
 
-                        // Task doesn't complete until data has been read. So either data is available 
-                        // (RanToCompletion) or client disconnected (Faulted) or task is cancelled (Canceled). 
+                        // Task doesn't complete until data has been read. So
+                        // either data is available (RanToCompletion) or client
+                        // disconnected (Faulted) or task is cancelled
+                        // (Canceled). 
                         var readTask = sslStream.ReadAsync(buffer, 0, buffer.Length, ct);
 
                         var completedTask = await Task.WhenAny(timeoutTask, readTask).ConfigureAwait(false);
 
-                        // Checking on readTask state like so is only possible when ReadAsync was callled on
-                        // a stream and not directly on the socket. Keep in mind that the Is* state properties
-                        // on a task aren't mutually exclusive whereas the Status is.
+                        // Checking on readTask state like so is only possible
+                        // when ReadAsync was callled on a stream and not
+                        // directly on the socket. Keep in mind that the Is*
+                        // state values of a task aren't mutually exclusive
+                        // whereas the Status values are.
                         if (completedTask == timeoutTask || (readTask.Status == TaskStatus.Canceled || readTask.Status == TaskStatus.Faulted))
                         {
                             break;
@@ -137,18 +152,22 @@ namespace AsyncTlsSocketEchoServerClient.Server
                             readOperations++;
                             bytesReceived += readBytes;
 
-                            // Zero bytes read marks end of stream reached. This happens upon client disconnect
+                            // Zero bytes read marks end of stream reached. This
+                            // happens upon client disconnect.
                             if (readBytes == 0)
                             {
                                 break;
                             }
                             else
                             {
-                                // await implies that while we're transmitting we cannot receive. Or rather
-                                // the operating system's receive buffer may be filling up, but we don't fetch 
-                                // from it. No need to receive when we cannot send to the same client in parallel, 
-                                // and we don't want to risk overriding buffer with new bytes because we've send
-                                // the old ones. That would garble up the transmission.
+                                // await implies that while we're transmitting
+                                // we cannot receive. Or rather the operating
+                                // system's receive buffer may be filling up,
+                                // but we aren't reading from it as we cannot
+                                // send to the same client in parallel anyway.
+                                // Also, we don't want to risk overriding buffer
+                                // with new until we've send the old ones. That
+                                // would garble up the transmission.
                                 await sslStream.WriteAsync(buffer, 0, readBytes, ct).ConfigureAwait(false);
                                 writeOperations++;
                                 bytesSent += readBytes;
@@ -161,11 +180,14 @@ namespace AsyncTlsSocketEchoServerClient.Server
             }
             catch(Exception e)
             {
-                // During a server shutdown through the Stop method, it'll iterate through all clients and close
-                // their sockets. This'll usually result in one of the async method in the loop to throw a indicating
-                // that the task for cancelled:
-                // System.IO.IOException: The write operation failed, see inner exception. ---> System.Threading.Tasks.TaskCanceledException: A task was canceled.
-                // Unless we explicitly catch the exception, it'll go unnoticed.
+                // During a server shutdown through the Stop method, it'll
+                // iterate through all clients and close their sockets. This'll
+                // usually cause some async method in the loop to throw an
+                // exception indicating that the task was cancelled:
+                // "System.IO.IOException: The write operation failed, see inner
+                // exception. ---> System.Threading.Tasks.TaskCanceledException:
+                // A task was canceled". Unless we explicitly catch such
+                // exceptions, they'll go unnoticed.
                 Logger.Log("--> " + e);
             }
             finally
@@ -176,16 +198,19 @@ namespace AsyncTlsSocketEchoServerClient.Server
                 Interlocked.Add(ref BytesReceived, bytesReceived);
                 Interlocked.Add(ref BytesSent, bytesSent);
 
-                // Not called immidiately upon cancellation, but the next time around the loop upon checking
-                // the IsCallationRequested property. It's called immidiately when a client disconnects, though.
+                // Not called immidiately upon cancellation, but the next time
+                // around the loop upon checking the IsCallationRequested
+                // property. It's called immidiately when a client disconnects,
+                // though.
                 DisconnectClient(endPoint);
             }
         }
 
         void DisconnectClient(EndPoint endPoint)
         {
-            // Because we may be called from either ProcessEchoAsync or Stop methods, and in parallel, 
-            // the socket may have already been shutdown, closed, and removed from _clients.
+            // Because we may be called from either the ProcessEchoAsync or the
+            // Stop method, and potentially in parallel, the socket may have
+            // already been shutdown, closed, and removed from _clients.
             var ok = _clients.TryRemove(endPoint, out Socket client);
             if (ok)
             {
@@ -198,7 +223,8 @@ namespace AsyncTlsSocketEchoServerClient.Server
 
     static class Logger
     {
-        // Ideally should be protected with a lock to prevent garbled output.            
+        // Ideally, Console should be protected by a lock to prevent garbled
+        // output.
         public static void Log(string message)
         {
             Console.WriteLine(message);
@@ -233,7 +259,8 @@ namespace AsyncTlsSocketEchoServerClient.Server
     {
         static void Main(string[] args)
         {
-// Set to false to run through Visual Studio (for debugging) and true to run through server.ps1
+// Set to false in order to launch server from within Visual Studio (for
+// debugging) and true to run from server.ps1.
 #if false
             var ipAddress = IPAddress.Parse(args[0]);
             var remoteEndPoint = new IPEndPoint(ipAddress, int.Parse(args[1]));
@@ -251,12 +278,14 @@ namespace AsyncTlsSocketEchoServerClient.Server
             Console.ReadKey();
             server.Stop();
 
-            // Just because we stopped the server's listener and closed all clients connection doesn't
-            // necessarily mean that the async method processing each client has finished executing.
-            // We'll give all the async tasks a change to halt and update the statistics before
-            // displaying those. Without the sleep, and if we only had a single client, the statistics
-            // would all be zero because the methods finally block have yet executed. With more clients
-            // the results of one of clients will likely be discarded.
+            // Just because we stopped the server's listener and closed all
+            // client connections doesn't necessarily mean that every async
+            // method processing each client has finished executing. We'll give
+            // the async tasks a change to finish and update statistics before
+            // displaying. Without the sleep, and if we only had a single
+            // client, statistics would all be zero because the methods finally
+            // block have yet executed. With more clients the results of one of
+            // clients would likely be discarded.
             Thread.Sleep(1000);
             Logger.Log($"Read operations: {server.ReadOperations}");
             Logger.Log($"Write operations: {server.WriteOperations}");
