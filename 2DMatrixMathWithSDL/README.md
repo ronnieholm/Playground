@@ -10,6 +10,8 @@ http://www.epcc.edu/OfficeofStudentSuccess/tutorialservices/tutorialsupportservi
 
 [The Camera Transform](https://www.youtube.com/watch?v=mpTl003EXCY)
 
+https://www.youtube.com/watch?v=5-minbbZW14
+
 Main game class originates from the series (rewatch from start):
 
 [Making A Game #1: Making The Game Loop : C++ And SDL2 Tutorial](https://www.youtube.com/watch?v=44tO977slsU&index=3&list=PLhfAbcv9cehhkG7ZQK0nfIGJC_C-wSLrx)

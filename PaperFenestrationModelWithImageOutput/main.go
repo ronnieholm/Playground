@@ -9,6 +9,8 @@ package main
 // [ ] Implement console UI with https://github.com/rivo/tview
 // [ ] Implement browser UI with web sockets
 // [ ] Implement browser UI with web assembly once Go 1.11 ships
+// [ ] Numerically find intersection between point and line using vectors and dot product over estimation method:
+//     https://www.youtube.com/watch?v=0lG53-ogF2k
 
 import (
 	"fmt"
@@ -82,6 +84,7 @@ func distanceBetweenPoint(p, q point) float64 {
 	return math.Sqrt(((p.x - q.x) * (p.x - q.x)) + ((p.y - q.y) * (p.y - q.y)))
 }
 
+// Find solution using numerical analysis
 func shortestDistanceAndPointOnLineToPoint(l line, p point) (float64, point) {
 	// TODO: rename a and b to left and right or l and r so we have l, m, r?
 	a := l.a
