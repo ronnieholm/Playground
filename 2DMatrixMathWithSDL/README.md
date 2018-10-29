@@ -1,6 +1,7 @@
-To move things around in 2D or 3D space (from one coordinate system to another),
-matrix are the way to go. The benefit is that many matrices can be multiplied
-together into one big matrix that does everything.
+To move things around in 2D or 3D space (from one coordinate system to
+another), a matrix is the way to go. The benefit is that multiple
+matrices can be multiplied together into one big matrix that does
+everything.
 
 - [Moving Objects in Space](https://www.youtube.com/watch?v=wArGifkRD2A)
 
@@ -15,3 +16,5 @@ https://www.youtube.com/watch?v=5-minbbZW14
 Main game class originates from the series (rewatch from start):
 
 [Making A Game #1: Making The Game Loop : C++ And SDL2 Tutorial](https://www.youtube.com/watch?v=44tO977slsU&index=3&list=PLhfAbcv9cehhkG7ZQK0nfIGJC_C-wSLrx)
+
+[Intro to Modern OpenGL Tutorial](https://www.youtube.com/watch?v=0jML5fMBDGg&index=8&list=PLEETnX-uPtBXT9T-hD0Bj31DSnwio-ywh)
