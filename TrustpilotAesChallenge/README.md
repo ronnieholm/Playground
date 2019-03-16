@@ -1,25 +1,24 @@
 # TrustpilotAesChallenge
 
-This folder holds multiple implementations of an AES decryptor for
-[cracking an AES encrypted
+This folder holds multiple implementations of an AES decryptor for [cracking an
+AES encrypted
 message](http://bugfree.dk/blog/2014/07/17/trustpilot-challenge-crack-aes-encrypted-message).
 
 ## Motivation
 
-- Learn how to setup a VSCode environment on Linux for Go, C and .NET
-  Core development.
+- Learn how to setup a VSCode environment on Linux for Go, C and .NET Core
+  development.
 - Learn how to profile a Go program.
 
 ## Summary of performance
 
-|Platform                      |Go   |C    |.NET Core/C#|.NET Core/F#|
-|------------------------------|-----|-----|------------|------------|
-|Ubuntu 16.04 (virtual machine)|0m58s|0m09s|       6m03s|       5m56s|
-|Windows 10 (physical machine) |0m30s|    -|       4m10s|       4m11s|
+|Platform                        |Go    |C    |.NET Core 2.2/C#|
+|--------------------------------|------|-----|----------------|
+|Ubuntu 18.04 (physical machine) |0m31s |0m07s|       0m49s    |
 
 CPU info:
 
-    rh@linux:~/git/Playground$ cat /proc/cpuinfo 
+    rh@xps:~/git/Playground$ cat /proc/cpuinfo 
     processor       : 0
     vendor_id       : GenuineIntel
     cpu family      : 6
@@ -46,16 +45,15 @@ CPU info:
     address sizes   : 39 bits physical, 48 bits virtual
     power management:
 
-Observe presense of CPU flags pclmulqdq (Perform a Carry-Less
-Multiplication of Quadword instruction) and aes (Advanced Encryption
-Standard).
+Observe the presense of CPU flags pclmulqdq (Perform a Carry-Less Multiplication
+of Quadword instruction) and aes (Advanced Encryption Standard).
 
 ## Go
 
 Linux: runtime and memory use measured by the time command:
 
-    rh@linux:~/git/Playground/TrustpilotAesChallenge/Golang/src$ /usr/bin/time --verbose go run program.go
-    [5 11 14 11 1 7 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+    rh@xps:~/git/Playground/TrustpilotAesChallenge/Go/src$ /usr/bin/time --verbose go run program.go
+    5 11 14 11 1 7
     Congra�u�a�ions� You found the decryption key. Are you the One?! ;-)
     You're curious and you're up for a challenge! So we like you already.
     If you'd like to work with us at Trustpilot then email us the code you wrote to find the decryption key together with your resume.
@@ -63,55 +61,33 @@ Linux: runtime and memory use measured by the time command:
     We'll get in touch with you shortly.
 
     Best regards
-    The developers at Trustpilot	
-	
-	Command being timed: "go run hello.go"
-	User time (seconds): 59.89
-	System time (seconds): 0.98
-	Percent of CPU this job got: 104%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:58.29
-	Average shared text size (kbytes): 0
-	Average unshared data size (kbytes): 0
-	Average stack size (kbytes): 0
-	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 85264
-	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 0
-	Minor (reclaiming a frame) page faults: 34070
-	Voluntary context switches: 73328
-	Involuntary context switches: 14760
-	Swaps: 0
-	File system inputs: 8
-	File system outputs: 11376
-	Socket messages sent: 0
-	Socket messages received: 0
-	Signals delivered: 0
-	Page size (bytes): 4096
-	Exit status: 0
-
-Windows: runtime measured using PowerShell cmdlet:
-
-    % measure-command { .\src.exe }
-
-    Days              : 0
-    Hours             : 0
-    Minutes           : 0
-    Seconds           : 29
-    Milliseconds      : 988
-    Ticks             : 299880550
-    TotalDays         : 0.000347083969907407
-    TotalHours        : 0.00833001527777778
-    TotalMinutes      : 0.499800916666667
-    TotalSeconds      : 29.988055
-    TotalMilliseconds : 29988.055
-
-Windows build cross-compiled on Ubuntu:
-
-    rh@linux:~/git/Playground/TrustpilotAesChallenge/Golang/src$ GOOS=windows go build
+    The developers at Trustpilot	Command being timed: "go run program.go"
+        User time (seconds): 32.46
+        System time (seconds): 0.31
+        Percent of CPU this job got: 106%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:30.86
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 120828
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 43700
+        Voluntary context switches: 48691
+        Involuntary context switches: 8751
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 13392
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
 
 Profiling while the main program is running:
 
-    rh@linux:~/git/Playground/TrustpilotAesChallenge/Golang/src$ go tool pprof -seconds 10 http://localhost:8080/debug/pprof/profile
+    rh@xps:~/git/Playground/TrustpilotAesChallenge/Golang/src$ go tool pprof -seconds 10 http://localhost:8080/debug/pprof/profile
     Fetching profile over HTTP from http://localhost:8080/debug/pprof/profile?seconds=10
     Please wait... (10s)
     Saved profile in /home/rh/pprof/pprof.program.samples.cpu.001.pb.gz
@@ -226,87 +202,43 @@ Profiling while the main program is running:
             .          .     88:// func aesEncBlock(dst, src *[16]byte, ks []uint32)
 
 From profiling, we see that a large amount of time is spent within
-[gcm_amd64.s](https://golang.org/src/crypto/aes/gcm_amd64.s). If the
-platform permits, Go implements AES in assembler, making use of
-[build-in processor instructions for working with
+[gcm_amd64.s](https://golang.org/src/crypto/aes/gcm_amd64.s). If the platform
+permits, Go implements AES in assembler, making use of [build-in processor
+instructions for working with
 AES](https://en.wikipedia.org/wiki/AES_instruction_set).
 
-Looking at the hasGCMAsm (has Galois Counter Mode assembler) function
-in the profiler, reported time is likely one instruction off. It's
-more likely that line 79 is what takes up more than 50% of the
-runtime. 
+Looking at the hasGCMAsm (has Galois Counter Mode in assembler) function in the
+profiler, reported time is likely one instruction off. It's more likely that
+line 79 is what takes up more than 50% of the runtime. 
 
-hasGCMAsm stores a 1 in the AX register. A value of 1 in AX while
-executing the CPUID instruction causes the CPU to populate the DX
-register with [various processor info and feature
-flags](https://en.wikipedia.org/wiki/CPUID#EAX=1:_Processor_Info_and_Feature_Bits). The
-assembly then checks weather bits 1 and 25 of DX is set. If yes, the
+hasGCMAsm stores a 1 in the AX register. A value of 1 in AX while executing the
+CPUID instruction causes the CPU to populate the DX register with [various
+processor info and feature
+flags](https://en.wikipedia.org/wiki/CPUID#EAX=1:_Processor_Info_and_Feature_Bits).
+The assembly then checks weather bits 1 and 25 of DX is set. If yes, the
 function concludes that the CPU has build-in support for AES. 
 
 Bit 1 indicates support for the [CLMUL instruction
-set](https://en.wikipedia.org/wiki/CLMUL_instruction_set), useful for
-improving the speed of applications doing block cipher encryption in
-Galois/Counter Mode (such as AES). Bit 25 indicates support for the
-[AES instruction
+set](https://en.wikipedia.org/wiki/CLMUL_instruction_set), useful for improving
+the speed of applications doing block cipher encryption in Galois/Counter Mode
+(such as AES). Bit 25 indicates support for the [AES instruction
 set](https://en.wikipedia.org/wiki/AES_instruction_set).
 
-It would seem that the Go standard library isn't designed for calling
-into AES this many times in a tight loop. In principle, CPUID feature
-checking could be moved out of the hot path as support for the CLMUL
-and AES instruction sets doesn't change between calls.
+It would seem that the Go standard library isn't designed for calling into AES
+this many times in a tight loop. In principle, CPUID feature checking could be
+moved out of the hot path as support for the CLMUL and AES instruction sets
+doesn't change between calls.
 
 ## C
 
 The C program makes use of the [libcrypto
-API](https://wiki.openssl.org/index.php/Libcrypto_API). libcrypto
-provides the fundamental cryptographic routines used by libssl, and is
-used for base64 decoding and AES decryption.
+API](https://wiki.openssl.org/index.php/Libcrypto_API). libcrypto provides the
+fundamental cryptographic routines used by libssl, and is used for base64
+decoding and AES decryption.
 
-    rh@linux:~/git/Playground/TrustpilotAesChallenge/C$ gcc program.c -O2 -lcrypto
+    rh@xps:~/git/Playground/TrustpilotAesChallenge/C$ gcc program.c -O2 -lcrypto
 
-	rh@linux:~/git/Playground/TrustpilotAesChallenge/C$ /usr/bin/time --verbose ./a.out 
-	5 11 14 11 1 7
-	Congra�u�a�ions� You found the decryption key. Are you the One?! ;-)
-	You're curious and you're up for a challenge! So we like you already.
-	If you'd like to work with us at Trustpilot then email us the code you wrote to find the decryption key together with your resume.
-	The email is: thereisnospoon@trustpilot.com
-	We'll get in touch with you shortly.
-
-	Best regards
-	The developers at Trustpilot
-	
-	Command being timed: "./a.out"
-	User time (seconds): 9.08
-	System time (seconds): 0.00
-	Percent of CPU this job got: 99%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:09.12
-	Average shared text size (kbytes): 0
-	Average unshared data size (kbytes): 0
-	Average stack size (kbytes): 0
-	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 2324
-	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 0
-	Minor (reclaiming a frame) page faults: 126
-	Voluntary context switches: 1
-	Involuntary context switches: 155
-	Swaps: 0
-	File system inputs: 0
-	File system outputs: 0
-	Socket messages sent: 0
-	Socket messages received: 0
-	Signals delivered: 0
-	Page size (bytes): 4096
-	Exit status: 0
-
-Observe how C uses at maximum 2.4 MB of memory while Go uses 86 MB and
-.NET Core around 100 MB. The runtime speed is very impressive at well.
-
-## C#
-
-    rh@linux:~/git/Playground/TrustpilotAesChallenge/CSharp$ dotnet build --configuration release
-
-    rh@linux:~/git/Playground/TrustpilotAesChallenge/CSharp$ /usr/bin/time --verbose dotnet run --configuration release
+    rh@xps:~/git/Playground/TrustpilotAesChallenge/C$ /usr/bin/time --verbose ./a.out 
     5 11 14 11 1 7
     Congra�u�a�ions� You found the decryption key. Are you the One?! ;-)
     You're curious and you're up for a challenge! So we like you already.
@@ -316,33 +248,69 @@ Observe how C uses at maximum 2.4 MB of memory while Go uses 86 MB and
 
     Best regards
     The developers at Trustpilot
-
-        Command being timed: "dotnet run -configuration release"
-        User time (seconds): 323.70
-        System time (seconds): 50.64
-        Percent of CPU this job got: 103%
-        Elapsed (wall clock) time (h:mm:ss or m:ss): 6:02.95
+        Command being timed: "./a.out"
+        User time (seconds): 6.80
+        System time (seconds): 0.00
+        Percent of CPU this job got: 100%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.80
         Average shared text size (kbytes): 0
         Average unshared data size (kbytes): 0
         Average stack size (kbytes): 0
         Average total size (kbytes): 0
-        Maximum resident set size (kbytes): 95996
+        Maximum resident set size (kbytes): 3656
         Average resident set size (kbytes): 0
         Major (requiring I/O) page faults: 0
-        Minor (reclaiming a frame) page faults: 226546
-        Voluntary context switches: 532069
-        Involuntary context switches: 48474
+        Minor (reclaiming a frame) page faults: 168
+        Voluntary context switches: 1
+        Involuntary context switches: 7
         Swaps: 0
-        File system inputs: 40
-        File system outputs: 24
+        File system inputs: 0
+        File system outputs: 0
         Socket messages sent: 0
         Socket messages received: 0
         Signals delivered: 0
         Page size (bytes): 4096
         Exit status: 0
 
-    rh@linux:~/git/Playground/TrustpilotAesChallenge/CSharp$ dotnet publish --configuration release --runtime win10-x64
+Observe how C uses at maximum 2.4 MB of memory while Go uses 86 MB and
+.NET Core around 100 MB. The runtime speed is very impressive at well.
+
+## C#
+
+    rh@xps:~/git/Playground/TrustpilotAesChallenge/CSharp$ /usr/bin/time --verbose dotnet run --configuration release
+    5 11 14 11 1 7
+    Congra?u?a?ions? You found the decryption key. Are you the One?! ;-)
+    You're curious and you're up for a challenge! So we like you already.
+    If you'd like to work with us at Trustpilot then email us the code you wrote to find the decryption key together with your resume.
+    The email is: thereisnospoon@trustpilot.com
+    We'll get in touch with you shortly.
+
+    Best regards
+    The developers at Trustpilot
+        Command being timed: "dotnet run --configuration release"
+        User time (seconds): 52.63
+        System time (seconds): 5.75
+        Percent of CPU this job got: 119%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:48.72
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 454696
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 307449
+        Voluntary context switches: 348701
+        Involuntary context switches: 20277
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 56
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
 
 ## F#
 
-Same commands as for CSharp.
+No longer maintained.
