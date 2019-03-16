@@ -46,7 +46,8 @@ CPU info:
     power management:
 
 Observe the presense of CPU flags pclmulqdq (Perform a Carry-Less Multiplication
-of Quadword instruction) and aes (Advanced Encryption Standard).
+of Quadword instruction) and aes (Advanced Encryption Standard) which the Go
+runtime checks for.
 
 ## Go
 
@@ -310,6 +311,9 @@ Observe how C uses at maximum 2.4 MB of memory while Go uses 86 MB and
         Signals delivered: 0
         Page size (bytes): 4096
         Exit status: 0
+
+See also [Improving the performance of .NET crypto
+code](https://ndportmann.com/improving-dotnet-crypto-code), optimizing my original implementation from 5m16s to 0m49s.
 
 ## F#
 
