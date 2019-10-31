@@ -1,4 +1,5 @@
 #include "game.h"
+#include "matrix.h"
 
 int main(int argc, char **argv)
 {
