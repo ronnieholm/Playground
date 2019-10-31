@@ -1,1 +1,0 @@
-g++ -std=c++17 -g -pedantic main.cpp game.cpp -lSDL2 -lSDL2_ttf
