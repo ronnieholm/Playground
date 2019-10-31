@@ -8,3 +8,7 @@
 /AsyncTlsSocketEchoServerClient/src/AsyncTlsSocketEchoServerClient.Client/obj
 /AsyncTlsSocketEchoServerClient/src/AsyncTlsSocketEchoServerClient.Server/bin
 /AsyncTlsSocketEchoServerClient/src/AsyncTlsSocketEchoServerClient.Server/obj
+**/obj
+**/bi
+**/obj
+**/bin
