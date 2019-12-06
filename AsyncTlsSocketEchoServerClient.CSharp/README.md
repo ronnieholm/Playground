@@ -7,7 +7,7 @@ provided self-signed certificates.
 ## Compilation
 
     % cd src
-    % dotnet build
+    % dotnet build --configuration release
 
 ## Generating and installing certificates
 
