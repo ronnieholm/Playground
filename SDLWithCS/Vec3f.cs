@@ -9,6 +9,10 @@ namespace RaytracingInOneWeekend
     // type must happen runtime. For some types this is okay, but not for a Vec3
     // would sit on the hot path.
     //
+    // To work around this issue, we could generate the Vector using T4:
+    // https://www.youtube.com/watch?v=H4PGnWIytLw and
+    // https://www.youtube.com/watch?v=FBl8Eaa3GX8
+    //
     // To avoid heap allocation, Vec3f is implement as a struct instead of a
     // class. That way allocations happen on the stack instead.
     struct Vec3f
