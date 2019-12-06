@@ -12,9 +12,9 @@ message](http://bugfree.dk/blog/2014/07/17/trustpilot-challenge-crack-aes-encryp
 
 ## Summary of performance
 
-|Platform                        |Go    |C    |.NET Core 2.2/C#|
+|Platform                        |Go    |C    |.NET Core 3.1/C#|
 |--------------------------------|------|-----|----------------|
-|Ubuntu 18.04 (physical machine) |0m31s |0m07s|       0m49s    |
+|Ubuntu 18.04 (physical machine) |0m29s |0m07s|       0m38s     |
 
 CPU info:
 
@@ -53,7 +53,7 @@ runtime checks for.
 
 Linux: runtime and memory use measured by the time command:
 
-    rh@xps:~/git/Playground/TrustpilotAesChallenge/Go/src$ /usr/bin/time --verbose go run program.go
+    rh@xps:~/git/Playground/TrustpilotAesChallenge/Go$ /usr/bin/time --verbose go run program.go
     5 11 14 11 1 7
     Congra�u�a�ions� You found the decryption key. Are you the One?! ;-)
     You're curious and you're up for a challenge! So we like you already.
@@ -62,24 +62,26 @@ Linux: runtime and memory use measured by the time command:
     We'll get in touch with you shortly.
 
     Best regards
-    The developers at Trustpilot	Command being timed: "go run program.go"
-        User time (seconds): 32.46
-        System time (seconds): 0.31
-        Percent of CPU this job got: 106%
-        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:30.86
+    The developers at Trustpilot
+
+        Command being timed: "go run program.go"
+        User time (seconds): 31.45
+        System time (seconds): 0.58
+        Percent of CPU this job got: 109%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:29.25
         Average shared text size (kbytes): 0
         Average unshared data size (kbytes): 0
         Average stack size (kbytes): 0
         Average total size (kbytes): 0
-        Maximum resident set size (kbytes): 120828
+        Maximum resident set size (kbytes): 138840
         Average resident set size (kbytes): 0
-        Major (requiring I/O) page faults: 0
-        Minor (reclaiming a frame) page faults: 43700
-        Voluntary context switches: 48691
-        Involuntary context switches: 8751
+        Major (requiring I/O) page faults: 1
+        Minor (reclaiming a frame) page faults: 39180
+        Voluntary context switches: 84340
+        Involuntary context switches: 13076
         Swaps: 0
         File system inputs: 0
-        File system outputs: 13392
+        File system outputs: 27848
         Socket messages sent: 0
         Socket messages received: 0
         Signals delivered: 0
@@ -288,24 +290,25 @@ Observe how C uses at maximum 2.4 MB of memory while Go uses 86 MB and
 
     Best regards
     The developers at Trustpilot
+
         Command being timed: "dotnet run --configuration release"
-        User time (seconds): 52.63
-        System time (seconds): 5.75
-        Percent of CPU this job got: 119%
-        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:48.72
+        User time (seconds): 37.81
+        System time (seconds): 2.96
+        Percent of CPU this job got: 106%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:38.26
         Average shared text size (kbytes): 0
         Average unshared data size (kbytes): 0
         Average stack size (kbytes): 0
         Average total size (kbytes): 0
-        Maximum resident set size (kbytes): 454696
+        Maximum resident set size (kbytes): 166796
         Average resident set size (kbytes): 0
         Major (requiring I/O) page faults: 0
-        Minor (reclaiming a frame) page faults: 307449
-        Voluntary context switches: 348701
-        Involuntary context switches: 20277
+        Minor (reclaiming a frame) page faults: 181119
+        Voluntary context switches: 181444
+        Involuntary context switches: 8071
         Swaps: 0
         File system inputs: 0
-        File system outputs: 56
+        File system outputs: 48
         Socket messages sent: 0
         Socket messages received: 0
         Signals delivered: 0

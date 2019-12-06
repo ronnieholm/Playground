@@ -42,7 +42,7 @@ func decrypt() {
 							decryptor := cipher.NewCBCDecrypter(block, iv)
 							decryptor.CryptBlocks(clearText, cipherText)
 							if bytes.Contains(clearText, token) {
-								fmt.Printf("%d %d %d %d %d %d\n%s", a, b, c, d, e, f, clearText)
+								fmt.Printf("%d %d %d %d %d %d\n%s\n\n", a, b, c, d, e, f, clearText)
 							}
 						}
 					}

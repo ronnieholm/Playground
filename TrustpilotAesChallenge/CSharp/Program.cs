@@ -42,7 +42,7 @@ namespace CSharp
 
                                     Decrypt(cipherText, plaintext, key, iv);                                    
                                     if (ContainsTrust(plaintext))
-                                        Console.WriteLine($"{a} {b} {c} {d} {e} {f}\n{Encoding.ASCII.GetString(plaintext)}");
+                                        Console.WriteLine($"{a} {b} {c} {d} {e} {f}\n{Encoding.ASCII.GetString(plaintext)}\n");
                                 }
         }
     }

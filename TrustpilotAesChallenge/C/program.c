@@ -111,7 +111,7 @@ void decrypt_mine() {
 	      
 	      decrypt(cipherText, strlen(cipherText), key, iv, clearText);
 	      if (strstr(clearText, "trust") != NULL) {
-	        printf("%d %d %d %d %d %d\n%s\n", a, b, c, d, e, f, clearText);
+	        printf("%d %d %d %d %d %d\n%s\n\n", a, b, c, d, e, f, clearText);
 	      }
 	    }
 	  }	  
