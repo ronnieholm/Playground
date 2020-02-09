@@ -257,27 +257,27 @@ namespace SDLWithCS
         string _title;
         int _frameCount;
 
+        private void Sdl(int code)
+        {
+            if (code < 0)
+                throw new Exception(SDL_GetError());
+        }
+
+        private IntPtr Sdl(IntPtr ptr)
+        {
+            if (ptr == IntPtr.Zero)
+                throw new Exception(SDL_GetError());
+            return ptr;
+        }
+
         public void Initialize(string title, int x, int y, int width, int height)
         {
-            if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-                throw new Exception(SDL_GetError());
-
-            _window = SDL_CreateWindow(title, x, y, width, height, 0);
-            if (_window == IntPtr.Zero)
-                throw new Exception(SDL_GetError());
-
-            _renderer = SDL_CreateRenderer(_window, 0, 0);
-            if (_renderer == IntPtr.Zero)
-                throw new Exception(SDL_GetError());
-
-            if (TTF_Init() != 0)
-                throw new Exception(SDL_GetError());
-
-            _font = TTF_OpenFont("FreeSans.ttf", 18);
-            if (_font == IntPtr.Zero)
-                throw new Exception(SDL_GetError());
-
-            SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 0);
+            Sdl(SDL_Init(SDL_INIT_EVERYTHING));
+            _window = Sdl(SDL_CreateWindow(title, x, y, width, height, 0));
+            _renderer = Sdl(SDL_CreateRenderer(_window, 0, 0));
+            Sdl(TTF_Init());
+            _font = Sdl(TTF_OpenFont("FreeSans.ttf", 18));
+            Sdl(SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 0));
             Running = true;
         }
 
@@ -293,7 +293,7 @@ namespace SDLWithCS
 
         public void HandleEvents()
         {
-            SDL_PollEvent(out SDL_Event e);
+            Sdl(SDL_PollEvent(out SDL_Event e));
 
             switch (e.type)
             {                     
@@ -321,7 +321,7 @@ namespace SDLWithCS
 
         public void RenderFrame()
         {
-            SDL_RenderClear(_renderer);
+            Sdl(SDL_RenderClear(_renderer));
             //RenderFrameCounter();
 
             SDL_SetWindowTitle(_window, "foobar");
@@ -333,7 +333,7 @@ namespace SDLWithCS
 
         private void HandleKeyboard()
         {
-            var arrayPtr = SDL_GetKeyboardState(out int numKeys);
+            var arrayPtr = Sdl(SDL_GetKeyboardState(out int numKeys));
             Debug.Assert(NumKeys == numKeys);
 
             var keyState = new byte[NumKeys];
@@ -372,8 +372,8 @@ namespace SDLWithCS
         private void GetTextureAndRect(int x, int y, string text, IntPtr ttfFont, ref IntPtr sdlTexture, ref SDL_Rect rect)
         {
             var textColor = new SDL_Color { r = 255, g = 255, b = 255, a = 0 };
-            var surface = TTF_RenderText_Solid(ttfFont, text, textColor);
-            sdlTexture = SDL_CreateTextureFromSurface(_renderer, surface);
+            var surface = Sdl(TTF_RenderText_Solid(ttfFont, text, textColor));
+            sdlTexture = Sdl(SDL_CreateTextureFromSurface(_renderer, surface));
             var surface2 = (SDL_Surface)Marshal.PtrToStructure(surface, typeof(SDL_Surface));
             var textWidth = surface2.w;
             var textHeight = surface2.h;
@@ -407,12 +407,9 @@ namespace SDLWithCS
 
         public void DrawLine(int x1, int y1, int x2, int y2)
         {
-            if (SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 0) != 0)
-                throw new Exception(SDL_GetError());
-            if (SDL_RenderDrawLine(_renderer, x1, y1, x2, y2) != 0)
-                throw new Exception(SDL_GetError());
-            if (SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 0) != 0)
-                throw new Exception(SDL_GetError());
+            Sdl(SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 0));
+            Sdl(SDL_RenderDrawLine(_renderer, x1, y1, x2, y2));
+            Sdl(SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 0));
         }
 
         public void DrawText(int x, int y, string text)
