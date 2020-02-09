@@ -260,13 +260,13 @@ namespace SDLWithCS
         private void Sdl(int code)
         {
             if (code < 0)
-                throw new Exception(SDL_GetError());
+                throw new Exception("SDL pooped itself: " + SDL_GetError());
         }
 
         private IntPtr Sdl(IntPtr ptr)
         {
             if (ptr == IntPtr.Zero)
-                throw new Exception(SDL_GetError());
+                throw new Exception("SDL pooped itself: " + SDL_GetError());
             return ptr;
         }
 
@@ -294,7 +294,6 @@ namespace SDLWithCS
         public void HandleEvents()
         {
             Sdl(SDL_PollEvent(out SDL_Event e));
-
             switch (e.type)
             {                     
                 case SDL_EventType.SDL_QUIT:
