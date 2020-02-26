@@ -257,10 +257,15 @@ namespace SDLWithCS
         string _title;
         int _frameCount;
 
-        private void Sdl(int code)
+        private int Sdl(int code)
         {
             if (code < 0)
                 throw new Exception("SDL pooped itself: " + SDL_GetError());
+            
+            // Wrapping a function such as SDL_PollEvent we need the return
+            // value to exit the poll loop. In most other cases the return value
+            // can be ignores.
+            return code;
         }
 
         private IntPtr Sdl(IntPtr ptr)
