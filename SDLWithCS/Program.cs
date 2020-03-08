@@ -9,7 +9,7 @@ namespace SDLWithCS
 {
     public class TrigEngine : GraphicsEngine
     {
-        List<Matrix<double>> _startingPoints = new List<Matrix<double>>();
+        readonly List<Matrix<double>> _startingPoints = new List<Matrix<double>>();
         double _translateX;
         double _translateY;
         double _scaleX = 1;
@@ -82,7 +82,7 @@ namespace SDLWithCS
 
         public override void OnRenderFrame(long elapsedTime)
         {
-            List<Matrix<double>> _updatedPoints = new List<Matrix<double>>();
+            List<Matrix<double>> updatedPoints = new List<Matrix<double>>();
             var transform = new Transform2D();
             transform.Translate(-300, -300);
             transform.Scale(_scaleX, _scaleY);
@@ -92,14 +92,14 @@ namespace SDLWithCS
 
             var t = transform.Transform;
             foreach (var p in _startingPoints)
-                _updatedPoints.Add(p * t);
+                updatedPoints.Add(p * t);
 
-            for (var i = 1; i < _updatedPoints.Count; i++)
+            for (var i = 1; i < updatedPoints.Count; i++)
                 DrawLine(
-                    (int)_updatedPoints[i - 1][0,0], 
-                    (int)_updatedPoints[i - 1][0,1], 
-                    (int)_updatedPoints[i][0,0], 
-                    (int)_updatedPoints[i][0,1]);
+                    (int)updatedPoints[i - 1][0,0], 
+                    (int)updatedPoints[i - 1][0,1], 
+                    (int)updatedPoints[i][0,0], 
+                    (int)updatedPoints[i][0,1]);
             
             DrawText(10, 10, $"Tx: {_translateX}");
             DrawText(10, 35, $"Ty: {_translateY}");

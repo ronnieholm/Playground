@@ -54,8 +54,8 @@ namespace SDLWithCS
         // TODO: Possible use Span<T> to avoid bounds checking on array and similar features
         // making C# implementation very slow compared to C++.
 
-        static readonly ICalculator<T> calculator = Calculators.GetInstance<T>();
-        T[,] _matrix;
+        static readonly ICalculator<T> Calculator = Calculators.GetInstance<T>();
+        readonly T[,] _matrix;
 
         public int Rows => _matrix.GetLength(0);
         public int Columns => _matrix.GetLength(1);
@@ -93,7 +93,7 @@ namespace SDLWithCS
             var r = new Matrix<T>(a.Rows, a.Columns);
             for (var i = 0; i < a.Rows; i++)
                 for (var j = 0; j < a.Rows; j++)
-                    r[i, j] = calculator.Add(a[i, j], b[i, j]);
+                    r[i, j] = Calculator.Add(a[i, j], b[i, j]);
 
             return r;
         }
@@ -106,7 +106,7 @@ namespace SDLWithCS
             var r = new Matrix<T>(a.Rows, a.Columns);
             for (var i = 0; i < a.Rows; i++)
                 for (var j = 0; j < a.Rows; j++)
-                    r[i, j] = calculator.Subtract(a[i, j], b[i, j]);
+                    r[i, j] = Calculator.Subtract(a[i, j], b[i, j]);
 
             return r;
         }
@@ -123,7 +123,7 @@ namespace SDLWithCS
                 {
                     T cij = default;
                     for (var k = 0; k < a.Columns; k++)
-                        cij = calculator.Add(cij, calculator.Multiply(a[i, k], b[k, j]));
+                        cij = Calculator.Add(cij, Calculator.Multiply(a[i, k], b[k, j]));
                     r[i, j] = cij;
                 }
             }
@@ -139,7 +139,7 @@ namespace SDLWithCS
             var r = new Matrix<T>(a.Rows, a.Columns);
             for (var i = 0; i < a.Rows; i++)
                 for (var j = 0; j < a.Rows; j++)
-                    r[i, j] = calculator.Divide(a[i, j], b[i, j]);
+                    r[i, j] = Calculator.Divide(a[i, j], b[i, j]);
 
             return r;
         }
