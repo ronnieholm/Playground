@@ -84,10 +84,15 @@ namespace SDLWithCS
         {
             List<Matrix<double>> updatedPoints = new List<Matrix<double>>();
             var transform = new Transform2D();
+            var t1 = transform.Transform;
             transform.Translate(-300, -300);
+            var t2 = transform.Transform;
             transform.Scale(_scaleX, _scaleY);
+            var t3 = transform.Transform;
             transform.Rotate(_rotateAngle);
+            var t4 = transform.Transform;
             transform.Translate(_translateX, _translateY);
+            var t5 = transform.Transform;
             transform.Translate(300, 300);
 
             var t = transform.Transform;
@@ -116,23 +121,23 @@ namespace SDLWithCS
 
         static void Main(string[] args)
         {
-            var m1 = new Matrix<double>(2, 2, new double[] { 1,2,3,4 });
-            var m2 = new Matrix<double>(2, 2, new double[] { 1,2,3,4 });
-            var m3 = m1 * m2;
+            // var m1 = new Matrix<double>(2, 2, new double[] { 1,2,3,4 });
+            // var m2 = new Matrix<double>(2, 2, new double[] { 1,2,3,4 });
+            // var m3 = m1 * m2;
 
-            var v1 = new Matrix<double>(1, 3, new double[] { 0, 0, 1 });
-            System.Console.WriteLine(v1);
-            System.Console.WriteLine();
+            // var v1 = new Matrix<double>(1, 3, new double[] { 0, 0, 1 });
+            // System.Console.WriteLine(v1);
+            // System.Console.WriteLine();
 
-            var t = new Transform2D();
-            //t.Rotate(45);
-            t.Translate(4, 5);
-            t.Scale(7, 8);
-            System.Console.WriteLine(t.Transform);
-            System.Console.WriteLine();
+            // var t = new Transform2D();
+            // //t.Rotate(45);
+            // t.Translate(4, 5);
+            // t.Scale(7, 8);
+            // System.Console.WriteLine(t.Transform);
+            // System.Console.WriteLine();
 
-            var v2 = v1 * t.Transform;
-            System.Console.WriteLine(v2);
+            // var v2 = v1 * t.Transform;
+            // System.Console.WriteLine(v2);
 
             // var m6 = t.Transform;
             // System.Console.WriteLine(m6);
