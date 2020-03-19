@@ -4,7 +4,7 @@ using static SDL2.SDL;
 
 namespace Graphics.Example
 {
-    public class TransformationEngine : GraphicsEngine
+    public class TransformsEngine : GraphicsEngine
     {
         const int TranslateStep = 3;
         const double ScaleStep = 0.015;
@@ -19,15 +19,10 @@ namespace Graphics.Example
         double _scaleY = 1;
         double _rotateAngle = 0;
 
-        public TransformationEngine()
-        {
-            SetSquare();
-        }
+        public TransformsEngine() => SetSquare();
 
         private (double, double) CalculateCentroid(Matrix[] points)
         {
-            // TODO: Add to blog post
-            // https://math.stackexchange.com/questions/1801867/finding-the-centre-of-an-abritary-set-of-points-in-two-dimensions
             var xs = points[..^1].Select(p => p[0, 0]).Sum();
             var ys = points[..^1].Select(p => p[0, 1]).Sum();
             var n = points.Length - 1;
@@ -65,24 +60,14 @@ namespace Graphics.Example
 
         public override void UpdateState()
         {
-            // TODO: Abstract away so we query on F1, F2, and so on and only Pressed. No Down and so on
-            var f1 = _keys[(int)SDL_Scancode.SDL_SCANCODE_F1].Down;
-            var f2 = _keys[(int)SDL_Scancode.SDL_SCANCODE_F2].Down;
-            var ctrl = (_keys[(int)SDL_Scancode.SDL_SCANCODE_LCTRL].Down || _keys[(int)SDL_Scancode.SDL_SCANCODE_RCTRL].Down);
-            var shift = (_keys[(int)SDL_Scancode.SDL_SCANCODE_LSHIFT].Down || _keys[(int)SDL_Scancode.SDL_SCANCODE_RSHIFT].Down);
-            var left = _keys[(int)SDL_Scancode.SDL_SCANCODE_LEFT].Down;
-            var right = _keys[(int)SDL_Scancode.SDL_SCANCODE_RIGHT].Down;
-            var up = _keys[(int)SDL_Scancode.SDL_SCANCODE_UP].Down;
-            var down = _keys[(int)SDL_Scancode.SDL_SCANCODE_DOWN].Down;        
-
             if (_mouse.Left.Pressed)
                 System.Console.WriteLine("Left mouse");
 
-            if (f1 || f2)
+            if (_keys[F1].Down || _keys[F2].Down)
             {
-                if (f1)
+                if (_keys[F1].Down)
                     SetSquare();
-                if (f2)
+                if (_keys[F2].Down)
                     SetTriangle();
 
                 _translateX = 0;
@@ -92,27 +77,27 @@ namespace Graphics.Example
                 _rotateAngle = 0;
             }
 
-            if (shift && left)
+            if (_keys[Shift].Down && _keys[Left].Down)
                 _scaleX += ScaleStep * DeltaTime;
-            if (shift && right)
+            if (_keys[Shift].Down && _keys[Right].Down)
                 _scaleX -= ScaleStep * DeltaTime;
-            if (shift && up)
+            if (_keys[Shift].Down && _keys[Up].Down)
                 _scaleY += ScaleStep * DeltaTime;
-            if (shift && down)
+            if (_keys[Shift].Down && _keys[Down].Down)
                 _scaleY -= ScaleStep * DeltaTime;
 
-            if (!(shift || ctrl) && left)
+            if (!(_keys[Shift].Down || _keys[Ctrl].Down) && _keys[Left].Down)
                 _translateX -= TranslateStep * DeltaTime;
-            if (!(shift || ctrl) && right)
+            if (!(_keys[Shift].Down || _keys[Ctrl].Down) && _keys[Right].Down)
                 _translateX += TranslateStep * DeltaTime;
-            if (!(shift || ctrl) && up)
+            if (!(_keys[Shift].Down || _keys[Ctrl].Down) && _keys[Up].Down)
                 _translateY -= TranslateStep * DeltaTime;
-            if (!(shift || ctrl) && down)
+            if (!(_keys[Shift].Down || _keys[Ctrl].Down) && _keys[Down].Down)
                 _translateY += TranslateStep * DeltaTime;
 
-            if (ctrl && up)
+            if (_keys[Ctrl].Down && _keys[Up].Down)
                 _rotateAngle += RotateStep * DeltaTime;
-            if (ctrl && down)
+            if (_keys[Ctrl].Down && _keys[Down].Down)
                 _rotateAngle -= RotateStep * DeltaTime;
         }
 
@@ -163,12 +148,11 @@ namespace Graphics.Example
     {
         static void Main(string[] args)
         {
-            var engine = new TransformationEngine();
-            engine.Initialize("2D transformations", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 512, 512);
-            engine.Run();
-
-            // TODO: Implement IDisposable pattern on engine.
-            engine.Cleanup();
+            using (var engine = new TransformsEngine())
+            {
+                engine.Initialize("2D Transforms", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 512, 512);
+                engine.Run();
+            }
         }
     }
 }

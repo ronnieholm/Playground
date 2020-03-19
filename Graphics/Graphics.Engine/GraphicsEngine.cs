@@ -9,9 +9,17 @@ using static SDL2.SDL_ttf;
 
 namespace Graphics.Engine
 {
-    // TODO: Expose custom set of enums representing key and not SDL ones.
-    public class GraphicsEngine
+    public class GraphicsEngine : IDisposable
     {
+        protected const int F1 = (int)SDL_Scancode.SDL_SCANCODE_F1;
+        protected const int F2 = (int)SDL_Scancode.SDL_SCANCODE_F2;
+        protected const int Ctrl = (int)SDL_Scancode.SDL_SCANCODE_LCTRL;
+        protected const int Shift = (int)SDL_Scancode.SDL_SCANCODE_LSHIFT;
+        protected const int Left = (int)SDL_Scancode.SDL_SCANCODE_LEFT;
+        protected const int Right = (int)SDL_Scancode.SDL_SCANCODE_RIGHT;
+        protected const int Up = (int)SDL_Scancode.SDL_SCANCODE_UP;
+        protected const int Down = (int)SDL_Scancode.SDL_SCANCODE_DOWN;
+
         protected struct Key
         {
             public bool Down;
@@ -158,7 +166,6 @@ namespace Graphics.Engine
         public void EngineRenderFrame()
         {
             Sdl(SDL_RenderClear(_renderer));
-            // TODO: Computer FPS property by way of 1000 / Delta time?
             SDL_SetWindowTitle(_window, $"{Title} - {DeltaTime:0.00} - {(_targetTicksPerSecond / DeltaTime):0}");
             RenderFrame();
             SDL_RenderPresent(_renderer);
@@ -211,5 +218,7 @@ namespace Graphics.Engine
             Sdl(SDL_RenderCopy(_renderer, texture, IntPtr.Zero, ref rect));
             SDL_DestroyTexture(texture);            
         }
+
+        public void Dispose() => Cleanup();
     }
 }

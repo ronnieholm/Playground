@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphics.Engine", "Graphics.Engine\Graphics.Engine.csproj", "{6F903E0D-3D38-47E3-B80E-05FDCE850481}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphics.Example", "Graphics.Example\Graphics.Example.csproj", "{81B07BF3-8B88-47F0-BAF8-171629177576}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphics.2DTransforms", "Graphics.2DTransforms\Graphics.2DTransforms.csproj", "{81B07BF3-8B88-47F0-BAF8-171629177576}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

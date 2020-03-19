@@ -15,8 +15,6 @@ namespace Graphics.Engine
 {
     public class Matrix
     {
-        // TODO: Possible use Span<T> to avoid bounds checking on array and
-        // similar features making C# implementation slow compared to C++.
         readonly double[,] _matrix;
 
         public int Rows => _matrix.GetLength(0);
