@@ -5,7 +5,7 @@ and [Slopes of Machine Learning - Computerphile](https://www.youtube.com/watch?v
 
 The interesting thing with trees is writing tree processors. We'd feed a tree
 into a processor and get a tree out. This example is with evaluating expression
-trees, but it could be any kind of tree.
+trees by computing partial derivatives.
 
 For this object oriented version, ```eval``` and ```deriv``` are overriden
 methods on each type of node. With structured programming, each type would hold
