@@ -91,8 +91,8 @@ namespace ExpressionTrees
                     new Var("x")
                 );
 
-            Console.WriteLine(e1);
-            Console.WriteLine(e2);
+            Console.WriteLine(e1); // (3 * (y + x))
+            Console.WriteLine(e2); // ((3 * y) + x)
 
             var env = new Dictionary<string, int>
             {
@@ -100,8 +100,8 @@ namespace ExpressionTrees
                 { "y", 4 }
             };
 
-            Console.WriteLine(e1.Eval(env));
-            Console.WriteLine(e2.Eval(env));
+            Console.WriteLine(e1.Eval(env)); // 18
+            Console.WriteLine(e2.Eval(env)); // 14
 
             // x^2 + xy + y^3
             var e3 =
@@ -125,9 +125,9 @@ namespace ExpressionTrees
                     )
                 );
 
-            Console.WriteLine(e3);
-            var e3x = e3.Deriv("x");
-            var e3y = e3.Deriv("y");
+            Console.WriteLine(e3); // ((x * x) + ((x * y) + (y * (y * y))))
+            var e3x = e3.Deriv("x"); // (((1 * x) + (x * 1)) + (((1 * y) + (x * 0)) + ((0 * (y * y)) + (y * ((0 * y) + (y * 0))))))
+            var e3y = e3.Deriv("y"); // (((0 * x) + (x * 0)) + (((0 * y) + (x * 1)) + ((1 * (y * y)) + (y * ((1 * y) + (y * 1))))))
             Console.WriteLine(e3x);
             Console.WriteLine(e3y);
 
