@@ -126,10 +126,10 @@ namespace ExpressionTrees
                 );
 
             Console.WriteLine(e3); // ((x * x) + ((x * y) + (y * (y * y))))
-            var e3x = e3.Deriv("x"); // (((1 * x) + (x * 1)) + (((1 * y) + (x * 0)) + ((0 * (y * y)) + (y * ((0 * y) + (y * 0))))))
-            var e3y = e3.Deriv("y"); // (((0 * x) + (x * 0)) + (((0 * y) + (x * 1)) + ((1 * (y * y)) + (y * ((1 * y) + (y * 1))))))
-            Console.WriteLine(e3x);
-            Console.WriteLine(e3y);
+            var e3x = e3.Deriv("x"); 
+            var e3y = e3.Deriv("y"); 
+            Console.WriteLine(e3x); // (((1 * x) + (x * 1)) + (((1 * y) + (x * 0)) + ((0 * (y * y)) + (y * ((0 * y) + (y * 0))))))
+            Console.WriteLine(e3y); // (((0 * x) + (x * 0)) + (((0 * y) + (x * 1)) + ((1 * (y * y)) + (y * ((1 * y) + (y * 1))))))
 
             // Compute slope at point (1, 1)
             env = new Dictionary<string, int>
