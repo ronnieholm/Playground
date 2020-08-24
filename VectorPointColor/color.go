@@ -8,9 +8,9 @@ type Color struct {
 }
 
 var (
-	// White represents maximum intensity
+	// White is white color (#ffffff)
 	White = Color{1.0, 1.0, 1.0}
-	// Black represents minimum intensity
+	// Black is black color (#000000)
 	Black = Color{}
 )
 
