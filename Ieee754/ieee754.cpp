@@ -20,7 +20,7 @@ const int NON_SIGN_BITS = EXPONENT_BITS + MANTISSA_BITS;
 int encode(double n)
 {
     if (n > pow(2, EXPONENT_BITS)) {
-        printf("Error: Cannot encode number\n");
+        printf("Error: Number out of range\n");
         exit(1);
     }
 
@@ -49,7 +49,7 @@ double decode(int n)
 int main(int c, char** args)
 {
     if (c != 2) {
-        printf("Error: Expected single float argument\n");
+        printf("Error: Expected floating point argument\n");
         exit(1);
     }
 
