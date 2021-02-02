@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 // Compile and run:
 //
@@ -17,7 +18,7 @@ const int EXPONENT_BITS = 5;
 const int MANTISSA_BITS = 10;
 const int NON_SIGN_BITS = EXPONENT_BITS + MANTISSA_BITS;
 
-int encode(double n)
+uint32_t encode(double n)
 {
     if (n > pow(2, EXPONENT_BITS)) {
         printf("Error: Number out of range\n");
@@ -37,7 +38,7 @@ int encode(double n)
            mantissa;
 }
 
-double decode(int n)
+double decode(uint32_t n)
 {
     int sign = (n & 0b1000000000000000) >> NON_SIGN_BITS;
     int exponent = (n & 0b0111110000000000) >> MANTISSA_BITS;
@@ -46,7 +47,7 @@ double decode(int n)
     return pow(-1, sign) * (1 + percentage) * pow(2, exponent);
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
     if (argc != 2) {
         printf("Error: Expected floating point argument\n");
