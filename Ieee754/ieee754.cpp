@@ -46,15 +46,15 @@ double decode(int n)
     return pow(-1, sign) * (1 + percentage) * pow(2, exponent);
 }
 
-int main(int c, char **args)
+int main(int argc, char *argv[])
 {
-    if (c != 2) {
+    if (argc != 2) {
         printf("Error: Expected floating point argument\n");
         exit(1);
     }
 
     double n;
-    sscanf(args[1], "%lf", &n);
+    sscanf(argv[1], "%lf", &n);
 
     double original = n;
     printf("Original: %f\n", original);  
