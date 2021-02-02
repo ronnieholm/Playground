@@ -1,14 +1,10 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-/AsyncTlsSocketEchoServerClient/.vs/AsyncTlsEchoServerClient
+﻿/AsyncTlsSocketEchoServerClient/.vs/AsyncTlsEchoServerClient
 /AsyncTlsSocketEchoServerClient/src/.vs
 /AsyncTlsSocketEchoServerClient/src/AsyncTlsSocketEchoServerClient.Client/bin
 /AsyncTlsSocketEchoServerClient/src/AsyncTlsSocketEchoServerClient.Client/obj
 /AsyncTlsSocketEchoServerClient/src/AsyncTlsSocketEchoServerClient.Server/bin
 /AsyncTlsSocketEchoServerClient/src/AsyncTlsSocketEchoServerClient.Server/obj
 **/obj
-**/bi
-**/obj
 **/bin
+
+Ieee754/ieee754
