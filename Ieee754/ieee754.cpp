@@ -46,7 +46,7 @@ double decode(int n)
     return pow(-1, sign) * (1 + percentage) * pow(2, exponent);
 }
 
-int main(int c, char** args)
+int main(int c, char **args)
 {
     if (c != 2) {
         printf("Error: Expected floating point argument\n");
