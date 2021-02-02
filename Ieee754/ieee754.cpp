@@ -4,7 +4,7 @@
 
 // Compile and run:
 //
-// $ gcc ieee754.c -lm -g -o ieee754 && ./ieee754 12.52571
+// $ g++ ieee754.cpp -lm -g -pedantic -o ieee754 && ./ieee754 12.52571
 // Original: 12.525710
 // Encoded: 3651
 // Decoded: 12.523438
@@ -13,9 +13,9 @@
 // Bits: 0  1 2 3 4 5  6  7  8  9  10 11 12 13 14 15
 // Type: S  E E E E E  M  M  M  M  M  M  M  M  M  M 
 
-#define EXPONENT_BITS   5
-#define MANTISSA_BITS   10
-#define NON_SIGN_BITS   EXPONENT_BITS + MANTISSA_BITS
+const int EXPONENT_BITS = 5;
+const int MANTISSA_BITS = 10;
+const int NON_SIGN_BITS = EXPONENT_BITS + MANTISSA_BITS;
 
 int encode(double n)
 {
