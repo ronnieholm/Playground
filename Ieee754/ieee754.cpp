@@ -21,7 +21,7 @@ int encode(double n)
 {
     if (n > pow(2, EXPONENT_BITS)) {
         printf("Error: Cannot encode number\n");
-        exit(2);
+        exit(1);
     }
 
     double a = fabs(n);
