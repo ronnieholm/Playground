@@ -24,8 +24,9 @@ using System.Threading.Tasks;
 // UI thread, consider updating the domain and UI in serial on the same thread,
 // or at least schedule the two to not overlap.
 //
-// Or have a Clone() on the domain and events to deep copy it. This would
-// ensure predictable locking for the shortest possible time while cloning.
+// Or have Snapshot() clone current domain and the events since last snapshot.
+// This would ensure predictable locking for the shortest possible time while
+// cloning.
 
 namespace Channels
 {
