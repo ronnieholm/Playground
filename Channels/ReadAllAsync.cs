@@ -24,7 +24,7 @@ namespace Channels
             return ch.Reader;
         }
 
-        public static async Task Consumer()
+        public static async Task ConsumerAsync()
         {
             var joe = Producer("Joe", 5);
             await foreach (var item in joe.ReadAllAsync())
@@ -34,6 +34,6 @@ namespace Channels
 
     public class ReadAllAsyncRunner 
     {
-        public static async Task Run() =>  await ReadAllAsync.Consumer();
+        public static async Task RunAsync() => await ReadAllAsync.ConsumerAsync();
     }
 }

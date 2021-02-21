@@ -41,7 +41,7 @@ namespace Channels
 
     public class MyChannelRunner 
     {
-        public static async Task Run()
+        public static async Task RunAsync()
         {
             var c = new MyChannel<int>();
             c.Write(42);

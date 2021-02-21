@@ -5,13 +5,14 @@
 
 namespace Channels
 {
-    class Program
+    static class Program
     {
         static async Task Main(string[] args)
         {
-            await MyChannelRunner.Run();
-            await WaitToReadAsyncRunner.Run();
-            await ReadAllAsyncRunner.Run();
+            await MyChannelRunner.RunAsync();
+            await WaitToReadAsyncRunner.RunAsync();
+            await ReadAllAsyncRunner.RunAsync();
+            DependentClientsRunner.Run();
         }
     }
 }

@@ -35,6 +35,6 @@ namespace Channels
 
     public class WaitToReadAsyncRunner 
     {
-        public static async Task Run() => await WaitToReadAsync.ProducerConsumer();
+        public static async Task RunAsync() => await WaitToReadAsync.ProducerConsumer();
     }
 }
