@@ -1,4 +1,4 @@
-# AsyncTlsSocketEchoServerClient (Golang)
+# AsyncTlsSocketEchoServerClient (Go)
 
 This repository contains the Golang implementation of a high
 performance, highly scalable, asynchronous TLS socket echo server and
