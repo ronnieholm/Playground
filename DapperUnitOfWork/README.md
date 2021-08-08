@@ -76,6 +76,12 @@ Similarly, instead of EF Migration, we use DbUp to manage the database schema.
   we can take advantage of records and their compiler implementation object
   comparisons.
 
+  Alternatively, we must implement the Unit of Work pattern to simplify
+  repository implementations, and have the application manually indicate
+  changes, additions, and deletions across any number of aggregates, e.g.,
+  multiple aggregates may have changed as the result of subscribers to domain
+  events.
+
 - Q: How to set system properties on each record with repetition?
 
   A: If we have CreatedBy, CreatedAt, UpdatedBy, UpdatedAt fields on each domain
