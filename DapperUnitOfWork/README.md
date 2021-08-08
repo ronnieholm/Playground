@@ -80,7 +80,10 @@ Similarly, instead of EF Migration, we use DbUp to manage the database schema.
   repository implementations, and have the application manually indicate
   changes, additions, and deletions across any number of aggregates, e.g.,
   multiple aggregates may have changed as the result of subscribers to domain
-  events.
+  events. The Unit of Work would know how to surgically change, add, delete each
+  entity with possible child entities. CreatedBy and CreatedAt columns could
+  also be automatically set by the Unit of Work based on the nature of the
+  change.
 
 - Q: How to set system properties on each record with repetition?
 
