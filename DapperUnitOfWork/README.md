@@ -61,7 +61,7 @@ not dependent on any database. This doesn't preclude a domain object from
 knowing when it's getting reconstituted. It's no different than EF forcing a
 private parameterless constructor.
 
-* Q: Without automatic change tracking in Dapper, if we have an `Order` with
+*Q: Without automatic change tracking in Dapper, if we have an `Order` with
 `OrderLines`, what would it take to track changes?*
    
 It's up to repository code to change track and issue correct SQL. For instance,
