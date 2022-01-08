@@ -1,9 +1,4 @@
-﻿/AsyncTlsSocketEchoServerClient/.vs/AsyncTlsEchoServerClient
-/AsyncTlsSocketEchoServerClient/src/.vs
-/AsyncTlsSocketEchoServerClient/src/AsyncTlsSocketEchoServerClient.Client/bin
-/AsyncTlsSocketEchoServerClient/src/AsyncTlsSocketEchoServerClient.Client/obj
-/AsyncTlsSocketEchoServerClient/src/AsyncTlsSocketEchoServerClient.Server/bin
-/AsyncTlsSocketEchoServerClient/src/AsyncTlsSocketEchoServerClient.Server/obj
+﻿**/.vs
 **/obj
 **/bin
 **/.idea
