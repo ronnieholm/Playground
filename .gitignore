@@ -6,5 +6,5 @@
 /AsyncTlsSocketEchoServerClient/src/AsyncTlsSocketEchoServerClient.Server/obj
 **/obj
 **/bin
-
+**/.idea
 Ieee754/ieee754
