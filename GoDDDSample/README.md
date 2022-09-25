@@ -10,8 +10,8 @@ implementation.
 ## Deviations from pure DDD architecture
 
 - *Application layer Data Transfer Objects contains JSON serialization
-  annotations*. Stictly speaking, adding these annotations is a valiolation of
-  the architecture as Application is presentation neutral. The problem with Go,
+  annotations*. Stictly speaking, adding these annotations is a violation of the
+  architecture as Application is presentation neutral. The problem with Go,
   however, is that it has no equivalent of .NET's Json.NET library where one can
   declaratively specify how to serialize any object, e.g., change FooBar to
   foo_bar or serialize DateTime to a specific format across serialization of all
@@ -23,7 +23,7 @@ implementation.
   types but copying ProductDto fields to ProductWebDto.
   
   A similar case could be make one level deeper and where we could've added
-  annotations on value objects and entitites. At least by annotating ProductDto,
+  annotations on value objects and entities. At least by annotating ProductDto,
   we don't deeply permeate Core with presentation details.
   
 - *Without a ORM, tracking changes across aggregates is made difficult*. Several
@@ -54,10 +54,10 @@ implementation.
   any CreatedAt and ModifiedAt fields on entities and aggregate root. The EF
   context can even change track multiple aggregate roots. While with Go, we
   could make it work for a single aggregate with SaveProductChanges(), making it
-  work acorss multiple aggregates without an ORM and MediatR tracker is
+  work across multiple aggregates without an ORM and MediatR tracker is
   non-trivial.
 
 ## Conclusion
 
 Go isn't a good fit for a full DDD architecture. It's more well-suited for the
-traditional presentation, business logic, database three-layer architure.
+traditional presentation, business logic, database three-layer architecture.
