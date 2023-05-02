@@ -144,6 +144,9 @@ application and how updates to EF might affect an application. Sometimes, it's
 better to be explicit and a little repetitive in the database layer and not an
 ORM.
 
+Instead of Dapper, plain ADO.NET and domain events for change tracking may be a
+better option for long term clean architecture solutions.
+
 ## References
 
 - [How to implement Unit Of Work pattern with Dapper?
