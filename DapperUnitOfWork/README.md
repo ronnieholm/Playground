@@ -145,7 +145,8 @@ better to be explicit and a little repetitive in the database layer and not an
 ORM.
 
 Instead of Dapper, plain ADO.NET and domain events for change tracking may be a
-better option for long term clean architecture solutions.
+better option for long term clean architecture solutions. Perhaps combined with
+another language such as F#, where encapsulating properties is less of an issue.
 
 ## References
 
