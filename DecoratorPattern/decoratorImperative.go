@@ -66,11 +66,6 @@ func (m DispatcherBehavior) Run(s *string) {
 	fmt.Println(*s)
 }
 
-// Above we capture state using structs, but we might capture state using
-// closures as well.
-
-// TODO: https://www.youtube.com/watch?v=F365lY5ECGY&list=PLJbE2Yu2zumAKLbWO3E2vKXDlQ8LT_R28
-
 func main() {
 	pipeline := NewPerformanceBehavior(NewLoggerBehavior(NewDispatcherBehavior()))
 	s := "Request"
