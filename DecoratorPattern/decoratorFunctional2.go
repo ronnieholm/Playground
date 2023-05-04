@@ -64,6 +64,25 @@ func divide(n int) float64 {
 	return float64(n / 2)
 }
 
+// For illustration purposes, add multiple steps with a single function
+func withLoggerCache(fn piFunc, logger *log.Logger, cache *sync.Map) piFunc {
+	return func(n int) (result float64) {
+		defer func(t time.Time) {
+			logger.Printf("took=%v, n=%v, result=%v", time.Since(t), n, result)
+		}(time.Now())
+		return func(n int) float64 {
+			key := fmt.Sprintf("%d", n)
+			val, ok := cache.Load(key)
+			if ok {
+				return val.(float64)
+			}
+			result := fn(n)
+			cache.Store(key, result)
+			return result
+		}(n)
+	}
+}
+
 func main() {
 	// Consider using Adapt function from
 	// https://medium.com/@matryer/writing-middleware-in-golang-and-how-go-makes-it-so-much-fun-4375c1246e81
@@ -75,4 +94,8 @@ func main() {
 	g := withLogger(f, log.New(os.Stdout, "test ", 1))
 	g(100000)
 	g(100000)
+
+	h := withLoggerCache(pi, log.New(os.Stdout, "test ", 1), &sync.Map{})
+	h(100000)
+	h(100000)
 }
