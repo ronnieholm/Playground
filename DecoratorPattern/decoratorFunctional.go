@@ -2,8 +2,6 @@ package main
 
 // The Power Of Golang's Decorator Pattern: https://www.youtube.com/watch?v=GipAZwKFgoA
 
-// TODO: https://www.youtube.com/watch?v=F365lY5ECGY&list=PLJbE2Yu2zumAKLbWO3E2vKXDlQ8LT_R28
-
 import (
 	"fmt"
 	"net/http"
