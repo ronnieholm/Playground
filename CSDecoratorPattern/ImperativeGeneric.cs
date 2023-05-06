@@ -65,8 +65,8 @@ public class ImperativeGeneric
         // using Activator.CreateInstance, passing in request and response types.
         var pipeline =
             new PerformanceBehavior2<CreateCommand, string>(
-            new LoggerBehavior2<CreateCommand, string>(
-                new DispatcherBehavior2<CreateCommand, string>()));
+                new LoggerBehavior2<CreateCommand, string>(
+                    new DispatcherBehavior2<CreateCommand, string>()));
         var response = pipeline.Run(request);
         Console.WriteLine("Response: " + response?.GetType() + " = " + response);
     }
