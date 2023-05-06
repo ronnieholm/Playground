@@ -9,7 +9,7 @@ public interface IRequest3
 
 public class Functional
 {
-    public PipelineBehavior WithPerformanceBehavior(PipelineBehavior next /* add dependencies */)
+    public PipelineBehavior WithPerformanceBehavior(PipelineBehavior next /* additional dependencies */)
     {
         return request =>
         {
