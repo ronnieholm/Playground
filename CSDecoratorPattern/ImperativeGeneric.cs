@@ -1,15 +1,15 @@
 namespace CSDecoratorPattern.ImperativeGeneric;
 
-public interface IRequest<out TResponse>
+public interface IRequest2<out TResponse>
 {
 }
 
-public interface IPipelineBehavior2<in TRequest, out TResponse> where TRequest : IRequest<TResponse>
+public interface IPipelineBehavior2<in TRequest, out TResponse> where TRequest : IRequest2<TResponse>
 {
     TResponse Run(TRequest request);
 }
 
-public class PerformanceBehavior2<TRequest, TResponse> : IPipelineBehavior2<TRequest, TResponse> where TRequest : IRequest<TResponse>
+public class PerformanceBehavior2<TRequest, TResponse> : IPipelineBehavior2<TRequest, TResponse> where TRequest : IRequest2<TResponse>
 {
     private readonly IPipelineBehavior2<TRequest, TResponse> _next;
 
@@ -24,7 +24,7 @@ public class PerformanceBehavior2<TRequest, TResponse> : IPipelineBehavior2<TReq
     }
 }
 
-public class LoggerBehavior2<TRequest, TResponse> : IPipelineBehavior2<TRequest, TResponse> where TRequest : IRequest<TResponse>
+public class LoggerBehavior2<TRequest, TResponse> : IPipelineBehavior2<TRequest, TResponse> where TRequest : IRequest2<TResponse>
 {
     private readonly IPipelineBehavior2<TRequest, TResponse> _next;
 
@@ -39,7 +39,7 @@ public class LoggerBehavior2<TRequest, TResponse> : IPipelineBehavior2<TRequest,
     }
 }
 
-public class DispatcherBehavior2<TRequest, TResponse> : IPipelineBehavior2<TRequest, TResponse> where TRequest : IRequest<TResponse>
+public class DispatcherBehavior2<TRequest, TResponse> : IPipelineBehavior2<TRequest, TResponse> where TRequest : IRequest2<TResponse>
 {
     public TResponse Run(TRequest request)
     {
@@ -50,7 +50,7 @@ public class DispatcherBehavior2<TRequest, TResponse> : IPipelineBehavior2<TRequ
     }
 }
 
-public class CreateCommand : IRequest<string>
+public class CreateCommand : IRequest2<string>
 {
 }
 
@@ -68,6 +68,6 @@ public class ImperativeGeneric
             new LoggerBehavior2<CreateCommand, string>(
                 new DispatcherBehavior2<CreateCommand, string>()));
         var response = pipeline.Run(request);
-        Console.WriteLine(response);
+        Console.WriteLine("Response: " + response?.GetType() + " = " + response);
     }
 }

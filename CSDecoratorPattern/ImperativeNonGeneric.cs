@@ -1,6 +1,9 @@
-namespace CSDecoratorPattern.Imperative;
+namespace CSDecoratorPattern.ImperativeNonGeneric;
 
-// Marker interface. Not strictly required.
+// If all behaviors set all fields through the constructors, and all dependencies they call into are thread-safe, the
+// pipeline could be instantiated only once. Otherwise, it should be instantiated per request.
+
+// Marker interface. Not strictly required as we could replace it with object.
 public interface IRequest
 {
 }
@@ -45,7 +48,8 @@ public class DispatcherBehavior : IPipelineBehavior
 {
     public object Run(IRequest request)
     {
-        // Locate and call request handler here.
+        // Locate and dispatch to individual handlers here.
+        Console.WriteLine("Dispatcher");
         return 42;
     }
 }
@@ -54,7 +58,7 @@ public class CreateCommand : IRequest
 {
 }
 
-public class Imperative
+public class ImperativeNonGeneric
 {
     public void Main()
     {
