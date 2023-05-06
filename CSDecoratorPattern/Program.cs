@@ -1,6 +1,6 @@
 ﻿using CSDecoratorPattern.ImperativeNonGeneric;
 using CSDecoratorPattern.ImperativeGeneric;
-using CSDecoratorPattern.Functional;
+using CSDecoratorPattern.FunctionalNonGeneric;
 
 public class Program
 {
