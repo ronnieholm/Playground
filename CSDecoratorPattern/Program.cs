@@ -7,7 +7,7 @@ public class Program
     public static void Main()
     {
         new Imperative().Main();
-        new ImperativeGeneric().Main();
-        new Functional().Main();
+        // new ImperativeGeneric().Main();
+        // new Functional().Main();
     }
 }
