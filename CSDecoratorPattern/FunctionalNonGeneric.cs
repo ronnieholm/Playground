@@ -1,4 +1,4 @@
-namespace CSDecoratorPattern.Functional;
+namespace CSDecoratorPattern.FunctionalNonGeneric;
 
 using PipelineBehavior = Func<IRequest3, object>;
 
