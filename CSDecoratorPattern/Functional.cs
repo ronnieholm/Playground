@@ -11,6 +11,7 @@ public class Functional
 {
     public PipelineBehavior WithPerformanceBehavior(PipelineBehavior next /* additional dependencies */)
     {
+        // Func closes over arguments, including any additional dependencies.
         return request =>
         {
             Console.WriteLine("PerformanceBehavior before");
