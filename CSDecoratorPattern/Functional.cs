@@ -31,7 +31,7 @@ public class Functional
         };
     }
 
-    public object WithDispatcher(IRequest3 request)
+    public object WithDispatcherBehavior(IRequest3 request)
     {
         Console.WriteLine("DispatcherBehavior before");
         // Locate and call request handler here.
@@ -45,7 +45,7 @@ public class Functional
     
     public void Main()
     {
-        var pipeline = WithPerformanceBehavior(WithLoggerBehavior(WithDispatcher));
+        var pipeline = WithPerformanceBehavior(WithLoggerBehavior(WithDispatcherBehavior));
         var command = new CreateCommand();
         var response = pipeline(command);
         Console.WriteLine("Response: " + response.GetType() + " = " + response);
