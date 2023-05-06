@@ -49,7 +49,9 @@ public class DispatcherBehavior : IPipelineBehavior
     public object Run(IRequest request)
     {
         // Locate and dispatch to individual handlers here.
-        Console.WriteLine("Dispatcher");
+        Console.WriteLine("DispatcherBehavior before");
+        // Locate and call request handler here.
+        Console.WriteLine("DispatcherBehavior after");
         return 42;
     }
 }
