@@ -31,7 +31,7 @@ module Age =
             Error (ValidationError.create field "Too young")
         else
             Ok (Age age)
-    let value (Age n) = n       
+    let value (Age n) = n
 
 // Entity
 
@@ -76,7 +76,7 @@ let run (c: CreatePersonCommand) =
         PersonAggregateRoot.create id name age
         |> Result.mapError BusinessError
         |> Result.map PersonDto.ofPerson)
-    
+
 // Runner
 
 let r1 = run { Name = "John"; Age = 42 }
@@ -95,5 +95,3 @@ printfn $"%A{r3}"
 // Ok { Id = 1
 //      Name = "Jane"
 //      Age = 50 }
-
-
