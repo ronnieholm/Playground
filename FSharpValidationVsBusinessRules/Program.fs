@@ -11,13 +11,13 @@ module ValidationError =
 
 type PersonId = PersonId of int
 module PersonId =
-    let create id =
+    let validate id =
         Ok (PersonId id)
     let value (PersonId id) = id
 
 type Name = Name of string
 module Name =
-    let create field name =
+    let validate field name =
         if name = "John" then
             Error (ValidationError.create field "Too short")
         else
@@ -26,7 +26,7 @@ module Name =
 
 type Age = Age of int
 module Age =
-    let create field age =
+    let validate field age =
         if age = 42 then
             Error (ValidationError.create field "Too young")
         else
@@ -66,9 +66,9 @@ type CreatePersonCommandError =
 
 let run (c: CreatePersonCommand) =
     validation {
-        let! id = PersonId.create 1
-        and! name = Name.create (nameof(c.Name)) c.Name
-        and! age = Age.create (nameof(c.Age)) c.Age
+        let! id = PersonId.validate 1
+        and! name = Name.validate (nameof(c.Name)) c.Name
+        and! age = Age.validate (nameof(c.Age)) c.Age
         return id, name, age
     }
     |> Result.mapError ValidationErrors
