@@ -66,7 +66,7 @@ func Run() {
 	fmt.Println("----------------")
 
 	{
-		// Preferred if errors to be passed through to higher layer as is.
+		// Preferred if errors are to be passed through to higher layer as is.
 
 		a, e1 := newName("Ronnie")
 		b, e2 := newAge(90)
@@ -82,7 +82,7 @@ func Run() {
 	fmt.Println("----------------")
 
 	{
-		// Guarantees errors are collection, but is syntactically clumsy.
+		// Guarantees errors are collected, but is syntactically clumsy.
 
 		var errs = []error{}
 		a := validate(&errs, func() (*Name, error) { return newName("Bob") })
