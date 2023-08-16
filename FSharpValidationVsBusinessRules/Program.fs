@@ -61,7 +61,7 @@ module PersonDto =
 type CreatePersonCommandError =
     | ValidationErrors of ValidationError list
     | BusinessError of PersonAggregateBusinessError
-    // Data store error because person already exist
+    // Database error because person already exist
     // Other external system error because of some creation check
 
 let run (c: CreatePersonCommand) =
