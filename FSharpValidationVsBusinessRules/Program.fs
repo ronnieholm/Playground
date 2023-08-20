@@ -81,6 +81,7 @@ let run2 (c: CreatePersonCommand) =
     // Same as run but combines result and validation computation expression for easier reading
     // as the steps involved increases.
     result {
+        // FIX: Move validation logic to validate function on CreatePersonCommand module. 
         let c' = validation {
             let! id = PersonId.validate 1
             // FIX: The domain layer shouldn't know about field names. Instead
