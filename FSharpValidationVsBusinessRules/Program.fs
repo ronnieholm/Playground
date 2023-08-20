@@ -61,8 +61,8 @@ module PersonDto =
 type CreatePersonCommandError =
     | ValidationErrors of ValidationError list
     | BusinessError of PersonAggregateBusinessError
-    // Database error because person already exist
-    // Other external system error because of some creation check    
+    // Database/DuplicatePerson error because person already exist
+    // Other integration layer error    
 
 let run (c: CreatePersonCommand) =
     validation {
@@ -83,16 +83,22 @@ let run2 (c: CreatePersonCommand) =
     result {
         let validated = validation {
             let! id = PersonId.validate 1
+            // FIX: The domain layer shouldn't know about field names. Instead
+            // if an error is returned, the code below in application layer, which
+            // knows about the field name, should map the returned error to one
+            // including field name based on CreatePersonCommand.
             and! name = Name.validate (nameof(c.Name)) c.Name
             and! age = Age.validate (nameof(c.Age)) c.Age
             return id, name, age
         }
         let! id, name, age = validated |> Result.mapError ValidationErrors
-        // In real-life, we'd likely call PersonRepository.get id here and fail if person
+        // In real-life, we'd likely call PersonRepository.get and fail if the person already
         // already exists. That would be an async operation, in which case we should use
         // taskResult computation expression instead.
+        //do! PersonRepository.getAsync id |> Result.requireNone (DuplicatePerson id)
         let! person = PersonAggregateRoot.create id name age |> Result.mapError BusinessError
         // Persisting to database, another async operation, would happen here.
+        // If persisting fails, it'll raise an exception, not return an error.
         return PersonDto.ofPerson person
     }
 
