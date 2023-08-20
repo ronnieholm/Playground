@@ -62,7 +62,7 @@ type CreatePersonCommandError =
     | ValidationErrors of ValidationError list
     | BusinessError of PersonAggregateBusinessError
     // Database error because person already exist
-    // Other external system error because of some creation check
+    // Other external system error because of some creation check    
 
 let run (c: CreatePersonCommand) =
     validation {
@@ -76,6 +76,25 @@ let run (c: CreatePersonCommand) =
         PersonAggregateRoot.create id name age
         |> Result.mapError BusinessError
         |> Result.map PersonDto.ofPerson)
+
+let run2 (c: CreatePersonCommand) =
+    // Same as run but combines result and validation computation expression for easier reading
+    // as the steps involved increases.
+    result {
+        let validated = validation {
+            let! id = PersonId.validate 1
+            and! name = Name.validate (nameof(c.Name)) c.Name
+            and! age = Age.validate (nameof(c.Age)) c.Age
+            return id, name, age
+        }
+        let! id, name, age = validated |> Result.mapError ValidationErrors
+        // In real-life, we'd likely call PersonRepository.get id here and fail if person
+        // already exists. That would be an async operation, in which case we should use
+        // taskResult computation expression instead.
+        let! person = PersonAggregateRoot.create id name age |> Result.mapError BusinessError
+        // Persisting to database, another async operation, would happen here.
+        return PersonDto.ofPerson person
+    }
 
 // Runner
 
