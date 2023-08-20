@@ -87,8 +87,8 @@ let run2 (c: CreatePersonCommand) =
             // if an error is returned, the code below in application layer, which
             // knows about the field name, should map the returned error to one
             // including field name based on CreatePersonCommand.
-            and! name = Name.validate (nameof(c.Name)) c.Name
-            and! age = Age.validate (nameof(c.Age)) c.Age
+            and! name = Name.validate (nameof(c.Name)) c.Name // |> Result.mapError withField (nameof(c.Name)) 
+            and! age = Age.validate (nameof(c.Age)) c.Age // |> Result.mapError withField (nameof(c.Age))
             return id, name, age
         }
         let! id, name, age = validated |> Result.mapError ValidationErrors
