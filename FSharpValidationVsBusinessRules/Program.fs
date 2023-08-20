@@ -81,7 +81,7 @@ let run2 (c: CreatePersonCommand) =
     // Same as run but combines result and validation computation expression for easier reading
     // as the steps involved increases.
     result {
-        let validated = validation {
+        let c' = validation {
             let! id = PersonId.validate 1
             // FIX: The domain layer shouldn't know about field names. Instead
             // if an error is returned, the code below in application layer, which
@@ -91,7 +91,7 @@ let run2 (c: CreatePersonCommand) =
             and! age = Age.validate (nameof(c.Age)) c.Age // |> Result.mapError withField (nameof(c.Age))
             return id, name, age
         }
-        let! id, name, age = validated |> Result.mapError ValidationErrors
+        let! id, name, age = c' |> Result.mapError ValidationErrors
         // In real-life, we'd likely call PersonRepository.get and fail if the person already
         // already exists. That would be an async operation, in which case we should use
         // taskResult computation expression instead.
