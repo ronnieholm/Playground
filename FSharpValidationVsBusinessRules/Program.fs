@@ -17,18 +17,18 @@ module PersonId =
 
 type Name = Name of string
 module Name =
-    let validate field name =
+    let validate name =
         if name = "John" then
-            Error (ValidationError.create field "Too short")
+            Error "Too short"
         else
             Ok (Name name)
     let value (Name s) = s
 
 type Age = Age of int
 module Age =
-    let validate field age =
+    let validate age =
         if age = 42 then
-            Error (ValidationError.create field "Too young")
+            Error "Too young"
         else
             Ok (Age age)
     let value (Age n) = n
@@ -51,6 +51,14 @@ module PersonAggregateRoot =
 // Command
 
 type CreatePersonCommand = { Name: string; Age: int }
+module CreatePersonCommand =
+    let validate (c: CreatePersonCommand) =
+        validation {
+            let! id = PersonId.validate 1
+            and! name = Name.validate c.Name |> Result.mapError (ValidationError.create (nameof(c.Name))) 
+            and! age = Age.validate  c.Age |> Result.mapError (ValidationError.create (nameof(c.Age)))
+            return id, name, age
+        }
 
 type PersonDto = { Id: int; Name: string; Age: int }
 module PersonDto =
@@ -65,12 +73,7 @@ type CreatePersonCommandError =
     // Other integration layer error    
 
 let run (c: CreatePersonCommand) =
-    validation {
-        let! id = PersonId.validate 1
-        and! name = Name.validate (nameof(c.Name)) c.Name
-        and! age = Age.validate (nameof(c.Age)) c.Age
-        return id, name, age
-    }
+    CreatePersonCommand.validate c
     |> Result.mapError ValidationErrors
     |> Result.bind (fun (id, name, age) ->
         PersonAggregateRoot.create id name age
@@ -78,24 +81,13 @@ let run (c: CreatePersonCommand) =
         |> Result.map PersonDto.ofPerson)
 
 let run2 (c: CreatePersonCommand) =
-    // Same as run but combines result and validation computation expression for easier reading
-    // as the steps involved increases.
+    // Same as run but using result computation expression for easier reading as the number
+    // of steps involved increases.
     result {
-        // FIX: Move validation logic to validate function on CreatePersonCommand module. 
-        let c' = validation {
-            let! id = PersonId.validate 1
-            // FIX: The domain layer shouldn't know about field names. Instead
-            // if an error is returned, the code below in application layer, which
-            // knows about the field name, should map the returned error to one
-            // including field name based on CreatePersonCommand.
-            and! name = Name.validate (nameof(c.Name)) c.Name // |> Result.mapError withField (nameof(c.Name)) 
-            and! age = Age.validate (nameof(c.Age)) c.Age // |> Result.mapError withField (nameof(c.Age))
-            return id, name, age
-        }
-        let! id, name, age = c' |> Result.mapError ValidationErrors
+        let! id, name, age = CreatePersonCommand.validate c |> Result.mapError ValidationErrors
         // In real-life, we'd likely call PersonRepository.get and fail if the person already
-        // already exists. That would be an async operation, in which case we should use
-        // taskResult computation expression instead.
+        // already exists. That would be an async operation, in which case we should use the
+        // taskResult computation expression instead of result.
         //do! PersonRepository.getAsync id |> Result.requireNone (DuplicatePerson id)
         let! person = PersonAggregateRoot.create id name age |> Result.mapError BusinessError
         // Persisting to database, another async operation, would happen here.
@@ -105,9 +97,9 @@ let run2 (c: CreatePersonCommand) =
 
 // Runner
 
-let r1 = run { Name = "John"; Age = 42 }
-let r2 = run { Name = "Ronnie"; Age = 69 }
-let r3 = run { Name = "Jane"; Age = 50 }
+let r1 = run2 { Name = "John"; Age = 42 }
+let r2 = run2 { Name = "Ronnie"; Age = 69 }
+let r3 = run2 { Name = "Jane"; Age = 50 }
 
 printfn $"%A{r1}"
 printfn $"%A{r2}"
