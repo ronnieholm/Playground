@@ -88,7 +88,7 @@ aggregates where the second query could use the primary key of the parent entity
 the parent Id to query for and (2) there may be multiple Ids to query for.
 
 Whether one large query with joins or multiple queries passed as a single query
-is faster is impossible to tell upfront. The difference might be negligable for
+is faster is impossible to tell upfront. The difference might be negligible for
 the problem at hand.
 
 ## Implementation
@@ -96,7 +96,7 @@ the problem at hand.
 As (3) and (4) don't hold true for ADO.NET, an implementation should work
 without. Random ordering of rows imply maintaining lists/maps of Ids already
 encountered. Conceptually a row traversal cache, with each row plotting a path
-through the hierarchy, potentially encounting new nodes along the way.
+through the hierarchy, potentially encountering new nodes along the way.
 
 ## See also
 
