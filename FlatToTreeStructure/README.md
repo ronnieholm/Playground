@@ -1,6 +1,6 @@
 # FlatToTreeStructure
 
-*Work in progress.*
+**Work in progress.**
 
 ## Problem
 
