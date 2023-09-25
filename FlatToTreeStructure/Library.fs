@@ -95,13 +95,18 @@ module ParseResultSetIntoImmutableDomainObjects =
         parsedAs.Values
         |> Seq.map (fun a ->
             let bs =
-                parsedBs[a.Id].Values
-                |> Seq.map (fun b ->
-                    let ok, cs = parsedCs.TryGetValue((a.Id, b.Id))
+                let ok, bs = parsedBs.TryGetValue(a.Id)
 
-                    { b with
-                        Cs = if not ok then [] else cs.Values |> Seq.toList })
-                |> Seq.toList
+                if ok then
+                    bs.Values
+                    |> Seq.map (fun b ->
+                        let ok, cs = parsedCs.TryGetValue((a.Id, b.Id))
+
+                        { b with
+                            Cs = if not ok then [] else cs.Values |> Seq.toList })
+                    |> Seq.toList
+                else
+                    []
 
             { a with Bs = bs })
         |> Seq.toList

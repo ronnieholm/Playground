@@ -94,6 +94,10 @@ Random ordering of rows imply maintaining maps of Ids. Conceptually, maps would
 store previous paths taken through the object hierarchy, with each row being a
 potentially new path.
 
+It's a recursive descent parser with row-only look-ahead whose input is the
+table. The maps represent the intermediate representation, and iterating the
+maps "executes" the final transform .
+
 ## See also
 
 - https://blog.ploeh.dk/2023/09/18/do-orms-reduce-the-need-for-mapping
