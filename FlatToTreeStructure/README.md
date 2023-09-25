@@ -22,9 +22,9 @@ a_id | b_id | c_id
 
 Here assumptions are:
 
-- 1. Ids are unique
-- 2. Result is an object hierarchy, not a graph
-- 3. Rows are sorted
+1. Ids are unique
+2. Result is an object hierarchy, not a graph
+3. Rows are sorted
 
 The equivalent tree is:
 
@@ -45,7 +45,7 @@ table, this means going through rows top to bottom.
 For hierarchy level n + 1, we can a priori determine its vertical bounds, i.e.,
 where a level ends, provided an additional assumption:
 
-- 4. Requier look-ahead by independently address cells in the table.
+4. Require look-ahead by independently address cells in the table.
 
 ```text
 a_id | b_id | c_id
