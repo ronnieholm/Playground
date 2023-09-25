@@ -86,9 +86,9 @@ module ParseResultSetIntoImmutableDomainObjects =
 
         parseB r aid
 
-    let parse (reader: SQLiteDataReader) : A list =
-        while reader.Read() do
-            parseA reader
+    let parse (r: SQLiteDataReader) : A list =
+        while r.Read() do
+            parseA r
 
         // Transform mutable dictionaries of unique paths to an immutable
         // object hierarchy of As, Bs, Cs.
