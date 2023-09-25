@@ -26,86 +26,6 @@ module Domain =
     type BId = string
     type CId = string
 
-module ParseResultSetIntoMutableDomainObjects =
-    let parseC (r: SQLiteDataReader) : C option =
-        // No dictionary needed as we're at a object hierarchy leaf where no object repeats.
-        let id = r["c_id"]
-        if id <> DBNull.Value then Some { Id = string id } else None
-
-    // Here we assume b only has one parent (part of a one-to-may relationship). Had
-    // b been had multiple parents (part of a many-to-many relationship), key would
-    // have to be a key + b key, with a key passed into parseB.
-    let parsedBs = Dictionary<string, B>()
-
-    let parseB (r: SQLiteDataReader) : B option =
-        let id = r["b_id"]
-
-        if id <> DBNull.Value then
-            let id = string id
-            let ok, _ = parsedBs.TryGetValue(id)
-
-            if not ok then
-                parsedBs.Add(id, { Id = id; Cs = [] })
-
-                // If b isn't there, c isn't either so nest parsing of c inside conditional.
-                match parseC r with
-                | Some c ->
-                    let b = parsedBs[id]
-                    parsedBs[id] <- { b with Cs = c :: b.Cs }
-                | None -> ()
-
-                // Whether we parsed c or not, return new b.
-                Some parsedBs[id]
-            else
-                // We parsed b before, but now it may be with another c
-                // BUG: As objects in F# are immutable, the updated b is invisible inside parsedAs.
-                match parseC r with
-                | Some c ->
-                    let b = parsedBs[id]
-                    parsedBs[id] <- { b with Cs = c :: b.Cs }
-                | None -> ()
-
-                None
-        else
-            None
-
-    let parsedAs = Dictionary<string, A>()
-
-    let parseA (r: SQLiteDataReader) : A =
-        let id = string r["a_id"]
-        let ok, _ = parsedAs.TryGetValue(id)
-
-        if not ok then
-            parsedAs.Add(id, { Id = id; Bs = [] })
-
-        // As a is always there (top of object hierarchy), we always want to attempt to parse b, so outside conditional.
-        match parseB r with
-        | Some b ->
-            let a = parsedAs[id]
-            // If bs are later updated by parseB, we'll not catch the update due to F#'s immutability.
-            // We need parseB to tell us if the Some is a new or updated item. If it's an updated item
-            // we need to locate the b inside bs, remove it, and add a new b. Problem with this approach
-            // is that lists in F# are linked-in list under the hood, so they have linear time complexity.
-            //
-            // F# has a set time, but problem here is that with DDD, the entities we add to this set has
-            // their structural comparison disabled and they have no custom comparison defined. So we
-            // cannot quickly locate the existing object and remove it.
-            //
-            // Could one possible solution be to maintain an additional dictionary of a key and bs?
-            // Then when parsedAs dictionary is converted to a list, we patch up each a with its bs?
-            // This would avoid creating a new instance of b with each new c as the new dictionary
-            // would store bs as a mutable collection. Does this approach scale if add ds to the mix?
-            parsedAs[id] <- { a with Bs = b :: a.Bs }
-        | None -> ()
-
-        parsedAs[id]
-
-    let parse (reader: SQLiteDataReader) : A list =
-        while reader.Read() do
-            parseA reader |> ignore
-
-        parsedAs.Values |> Seq.toList
-
 module ParseResultSetIntoImmutableDomainObjects =
     // Visited paths from A -> B -> C
     let parsedCs = Dictionary<AId * BId, Dictionary<CId, C>>()
@@ -118,10 +38,12 @@ module ParseResultSetIntoImmutableDomainObjects =
             let ok, cs = parsedCs.TryGetValue((aid, bid))
 
             if not ok then
+                // We haven't been on a path from A to B yet.
                 let cs = Dictionary<CId, C>()
                 cs.Add(cid, { Id = cid })
                 parsedCs.Add((aid, bid), cs)
             else
+                // We have been on a path from A to B, but not this C.
                 cs.Add(string cid, { Id = string cid })
 
     // Visited paths from A -> B.
@@ -135,12 +57,12 @@ module ParseResultSetIntoImmutableDomainObjects =
             let ok, bs = parsedBs.TryGetValue(aid)
 
             if not ok then
-                // We haven't yet been on a path from this A yet.
+                // We haven't been on a path from A yet.
                 let bs = Dictionary<BId, B>()
                 bs.Add(bid, { Id = bid; Cs = [] })
                 parsedBs.Add(aid, bs)
             else
-                // We have been on a path from the A, but not to this B.
+                // We have been on a path from A, but not to this B.
                 let ok, _ = bs.TryGetValue(bid)
 
                 if not ok then
@@ -167,7 +89,8 @@ module ParseResultSetIntoImmutableDomainObjects =
         while reader.Read() do
             parseA reader
 
-        // Transform mutable dictionaries into immutable As.
+        // Transform mutable dictionaries with unique paths into an immutable
+        // hierarchy of As, Bs, Cs.
         parsedAs.Values
         |> Seq.map (fun a ->
             let bs =
@@ -207,9 +130,6 @@ type Tests() =
         // a1,b1,c1
         // a1,b1,c2
         // a1,b2,DBNull
-
-        // let parsedAsMutable = ParseResultSetIntoMutableDomainObjects.parse ()
-        // Assert.Equal(1, parsedAsMutable.Length)
 
         let parsedAsImmutable = ParseResultSetIntoImmutableDomainObjects.parse reader
         Assert.Equal(1, parsedAsImmutable.Length)
