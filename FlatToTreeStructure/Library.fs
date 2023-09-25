@@ -4,7 +4,8 @@ open System
 open System.Collections.Generic
 open System.Data.SQLite
 
-module ParseResultSetIntoMutableDomainObjects =
+[<AutoOpen>]
+module Domain =
     // In real-world DDD apps, we cannot just touch the internal collections of entities (except through reflection).
     // We might want to use an approach similar to the immutable one to instead generate collections to pass to
     // entity constructors. This doesn't solve the problem of inadvertently creating domain events unless we use
@@ -21,6 +22,11 @@ module ParseResultSetIntoMutableDomainObjects =
     [<NoComparison; NoEquality>]
     type A = { Id: string; Bs: B list }
 
+    type AId = string
+    type BId = string
+    type CId = string
+
+module ParseResultSetIntoMutableDomainObjects =
     let parseC (r: SQLiteDataReader) : C option =
         // No dictionary needed as we're at a object hierarchy leaf where no object repeats.
         let id = r["c_id"]
@@ -94,47 +100,13 @@ module ParseResultSetIntoMutableDomainObjects =
 
         parsedAs[id]
 
-    let parse () : A list =
-        let connection =
-            new SQLiteConnection("URI=file:../../../flatToTreeStructure.sqlite")
-
-        connection.Open()
-
-        let sql =
-            """select a.id a_id, b.id b_id, c.id c_id
-               from a
-               left join b on a.id = b.aid
-               left join c on b.id = c.bid
-               where a.id = @id"""
-
-        use cmd = new SQLiteCommand(sql, connection)
-        cmd.Parameters.AddWithValue("@id", "a1") |> ignore
-        let reader = cmd.ExecuteReader()
-
-        // Reader returns three rows in a one-to-many relationship:
-        // a1,b1,c1
-        // a1,b1,c2
-        // a1,b2,DBNull
-
+    let parse (reader: SQLiteDataReader) : A list =
         while reader.Read() do
             parseA reader |> ignore
 
         parsedAs.Values |> Seq.toList
 
 module ParseResultSetIntoImmutableDomainObjects =
-    [<NoComparison; NoEquality>]
-    type C = { Id: string }
-
-    [<NoComparison; NoEquality>]
-    type B = { Id: string; Cs: C list }
-
-    [<NoComparison; NoEquality>]
-    type A = { Id: string; Bs: B list }
-
-    type AId = string
-    type BId = string
-    type CId = string
-
     // Visited paths from A -> B -> C
     let parsedCs = Dictionary<AId * BId, Dictionary<CId, C>>()
 
@@ -191,27 +163,7 @@ module ParseResultSetIntoImmutableDomainObjects =
 
         parseB r aid
 
-    let parse () : A list =
-        let connection =
-            new SQLiteConnection("URI=file:../../../flatToTreeStructure.sqlite")
-
-        connection.Open()
-
-        let sql =
-            """select a.id a_id, b.id b_id, c.id c_id
-               from a
-               left join b on a.id = b.aid
-               left join c on b.id = c.bid
-               where a.id = @id"""
-
-        use cmd = new SQLiteCommand(sql, connection)
-        cmd.Parameters.AddWithValue("@id", "a1") |> ignore
-        let reader = cmd.ExecuteReader()
-
-        // Reader returns three rows in a one-to-many relationship:
-        // a1,b1,c1
-        // a1,b1,c2
-        // a1,b2,DBNull
+    let parse (reader: SQLiteDataReader) : A list =
         while reader.Read() do
             parseA reader
 
@@ -235,7 +187,29 @@ open Xunit
 type Tests() =
     [<Fact>]
     let Test () =
-        let parsedAsMutable = ParseResultSetIntoMutableDomainObjects.parse ()
-        let parsedAsImmutable = ParseResultSetIntoImmutableDomainObjects.parse ()
-        Assert.Equal(1, parsedAsMutable.Length)
+        let connection =
+            new SQLiteConnection("URI=file:../../../flatToTreeStructure.sqlite")
+
+        connection.Open()
+
+        let sql =
+            """select a.id a_id, b.id b_id, c.id c_id
+               from a
+               left join b on a.id = b.aid
+               left join c on b.id = c.bid
+               where a.id = @id"""
+
+        use cmd = new SQLiteCommand(sql, connection)
+        cmd.Parameters.AddWithValue("@id", "a1") |> ignore
+        let reader = cmd.ExecuteReader()
+
+        // SQL reader returns three rows in a one-to-many relationship:
+        // a1,b1,c1
+        // a1,b1,c2
+        // a1,b2,DBNull
+
+        // let parsedAsMutable = ParseResultSetIntoMutableDomainObjects.parse ()
+        // Assert.Equal(1, parsedAsMutable.Length)
+
+        let parsedAsImmutable = ParseResultSetIntoImmutableDomainObjects.parse reader
         Assert.Equal(1, parsedAsImmutable.Length)
