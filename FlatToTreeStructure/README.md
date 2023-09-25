@@ -1,17 +1,15 @@
 # FlatToTreeStructure
 
-**Work in progress.**
-
 ## Problem
 
-A tree may be represented as a table or as an object hierarchy.
+A tree may be represented as table or object hierarchy/graph form.
 
-This program experiments with converting from a table to an object hierarchy.
-This problems shows up in transforming an SQL result set into an object
+This program experiments with converting a table to an object hierarchy. Such
+problem shows up in many places, such as transforming an SQL result to an object
 hierarchy.
 
-In the table below, repetition is indicated by leaving out duplicate values.
-Imagine the table rotated 90 degrees clock-wise:
+In the table below, repeated values are left out to better show the hierarchical
+nature of the data:
 
 ```text
 a_id | b_id | c_id
@@ -22,13 +20,13 @@ a_id | b_id | c_id
      |      |  c_4
 ```
 
-Assumptions are that
+Here assumptions are:
 
 - 1. Ids are unique
-- 2. the result is an object hierarchy, not a graph
-- 3. rows are sorted
+- 2. Result is an object hierarchy, not a graph
+- 3. Rows are sorted
 
-The equivalent table is:
+The equivalent tree is:
 
 ```text
 a_1
@@ -40,17 +38,14 @@ a_1
     c_4
 ```
 
-Transforming, or evaluating the table (seen as a parsing problem), to a typed
-object hierarchy can be done recursively as a post-order traversal or
-imperatively by looping the rows.
+To transform, or evaluate, the table (seen as a parsing problem), to a typed
+object hierarchy may be accomplished by a post-order traversal. For a sorted
+table, this means going through rows top to bottom.
 
-For hierarchy level n + 1, we need its vertical bounds, represented by `+`s
-below. Vertically determining where a level ends adds to the assumptions that
+For hierarchy level n + 1, we can a priori determine its vertical bounds, i.e.,
+where a level ends, provided an additional assumption:
 
-- 4. Look-ahead is required with ability to independently address cells in the
-     table
-
-With sequential access only, recursive traversal becomes hard:
+- 4. Requier look-ahead by independently address cells in the table.
 
 ```text
 a_id | b_id | c_id
@@ -65,38 +60,39 @@ a_id | b_id | c_id
 ++++++++++++++++++
 ```
 
-Observe how the `+`s occur when Ids of non-leaf nodes change.
+Observe how `+`s are present when Ids of non-leaf nodes change.
 
-Evaluating the table would be an example of the interpreter pattern and `a_id`,
-`b_id`, `c_id` hints to separate evaluation functions.
+Transforming, or evaluating, a table with all assumptions met would be an
+example of the interpreter pattern with `a_id`, `b_id`, `c_id` hinting at
+separate evaluation functions.
 
-For an ADO.NET result set, assumptions (3) and (4) don't hold. We don't want to
-to first process the result set, reading rows into another structure. That would
-double the amount of storage needed and require more code.
+For an ADO.NET result set, assumptions (3) and (4) don't hold. To pre-process
+the result, reading rows into another structure, would be inefficient. It would
+double the amount of storage needed and require more code for new types.
 
-Also, in most cases the SQL query for retrieving collections of entities below
-the root will consist of left joins, not inner joins. An entity will typically
-have a collection of zero or more entities, leading to a result set with empty
-cells.
+Also observe that in most cases, the SQL query to retrieve collections of
+entities below the root will consist of left joins, not inner joins. An entity
+will typically have a collection of zero or more entities, leading to a result
+with empty cells.
 
 ## Alternatives
 
-Multiple result sets could potentially simplify the parsing problem by splitting
-it into multiple smaller problems. However, this would only work for two-level
-aggregates where the second query could use the primary key of the parent entity
-(the aggregate root). Once we get to three levels or more, we (1) no longer know
-the parent Id to query for and (2) there may be multiple Ids to query for.
+Multiple result could potentially simplify the parsing problem by splitting it
+into smaller problems. This would only work for two-level aggregates where the
+second query could use the primary key of the parent entity (the root). Once we
+get to three levels or more, we (1) no longer know the parent Id to query for
+and.
 
-Whether one large query with joins or multiple queries passed as a single query
-is faster is impossible to tell upfront. The difference might be negligible for
-the problem at hand.
+Whether one large query with joins or multiple smaller queries (passed as a
+"single" query to the backend) is faster is impossible to tell. The difference
+might be negligible for the problem at hand.
 
 ## Implementation
 
-As (3) and (4) don't hold true for ADO.NET, an implementation should work
-without. Random ordering of rows imply maintaining lists/maps of Ids already
-encountered. Conceptually a row traversal cache, with each row plotting a path
-through the hierarchy, potentially encountering new nodes along the way.
+As (3) and (4) don't hold for ADO.NET, an algorithm should work around those.
+Random ordering of rows imply maintaining maps of Ids. Conceptually, maps would
+store previous paths taken through the object hierarchy, with each row being a
+potentially new path.
 
 ## See also
 
