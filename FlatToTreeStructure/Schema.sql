@@ -20,10 +20,8 @@ inner join c on b.id = c.bid;
 
 delete from c where bid = 'b2';
 
-select a.id aid2, b.id bid2, c.id cid2
+select a.id a_id, b.id b_id, c.id c_id
 from a
 left join b on a.id = b.aid
-left join c on b.id = c.bid;
-
--- problem: we cannot assume that ids are grouped together, like first b1s, then b2s, but we can assume ordering of columns.
--- Therefore during iteration we'd need to lookup keys in a hashmap.
+left join c on b.id = c.bid
+where a.id = "a1"
