@@ -23,6 +23,7 @@ public sealed record UrlShortenerGrainState
     [Id(1)] public string ShortenedRouteSegment { get; set; } = "";
 }
 
+// ReSharper disable once UnusedType.Global
 public sealed class UrlShortenerGrain(
     [PersistentState(
         stateName: "url",
