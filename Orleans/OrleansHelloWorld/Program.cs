@@ -38,7 +38,6 @@ public sealed class UrlShortenerGrain(
             ShortenedRouteSegment = this.GetPrimaryKeyString(),
             FullUrl = fullUrl
         };
-
         await state.WriteStateAsync();
     }
 
