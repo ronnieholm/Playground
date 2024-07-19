@@ -5,10 +5,14 @@ package main
 
 // $ go run main.go
 // Typical output:
+//
 // Array of structs
 // 100000000, 1.14457597s
 // Struct of arrays
 // 100000000, 568.798278ms
+//
+// Go doesn't emit SIMD instructions so speedup is likely due to more
+// predictable access patterns.
 
 import (
 	"fmt"
