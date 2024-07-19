@@ -47,13 +47,13 @@ func runStructOfArrays(count int32) {
 	p.x, p.y, p.z = make([]float32, count), make([]float32, count), make([]float32, count)
 	p.vx, p.vy, p.vz = make([]float32, count), make([]float32, count), make([]float32, count)
 
-	for i := 1; i < int(count); i++ {
+	for i := 0; i < int(count); i++ {
 		p.x[i], p.y[i], p.z[i] = 1, 2, 3
 		p.vx[i], p.vy[i], p.vz[i] = 4, 5, 6
 	}
 
 	start := time.Now()
-	for i := 1; i < int(count); i++ {
+	for i := 0; i < int(count); i++ {
 		p.x[i] += p.vx[i]
 		p.y[i] += p.vy[i]
 		p.z[i] += p.vz[i]
