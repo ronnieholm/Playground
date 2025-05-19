@@ -3,7 +3,7 @@
 Given a set of tasks on the [critical path][critical-path-method], a single
 number estimate (in whatever unit of measure) is meaningless on its
 own. Estimates are better expressed in terms of confidence intervals. The [Monte
-Carlo simulation][monte-carlo-method] derives such confidence intervals.
+Carlo method][monte-carlo-method] derives such confidence intervals.
 
 ## How the simulation works
 
